@@ -27,8 +27,10 @@ export const CALCULATORS: CalculatorListing[] = [
   },
   {
     slug: "pipe-volume",
-    title: "Pipe Volume",
-    status: "coming-soon",
-    summary: "Standalone pipe volume conversion for a later release.",
+    title: "Pipeline Volume & Displacement",
+    href: "/calculators/pipe-volume",
+    status: "live",
+    summary:
+      "Inside diameter, line fill volume, volume per distance, fluid fill mass, fill / displacement time, and chemical inhibitor dosage for metric and US Customary pipe sections.",
   },
 ];

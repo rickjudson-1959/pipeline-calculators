@@ -8,9 +8,9 @@ export function SiteFooter() {
           code interpretation, and not a substitute for the engineer of record.
         </p>
         <p className="footer-meta">
-          Encoded checks only: hydrostatic high and low elevation gates, and
-          wall thickness / MAOP, E, T, D/t, and multi-standard comparison. No
-          ads and no email gate.
+          Encoded checks only: hydrostatic high and low elevation gates, wall
+          thickness / MAOP, E, T, D/t, and multi-standard comparison, plus
+          pipe volume and displacement estimates. No ads and no email gate.
         </p>
       </div>
     </footer>

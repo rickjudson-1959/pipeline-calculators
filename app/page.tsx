@@ -11,8 +11,9 @@ export default function HomePage() {
         <p className="lede">
           A small toolkit for pipeline work in Canada and the United States.
           Live tools cover hydrostatic test fill volume and elevation pressure
-          checks, plus design-factor wall thickness and MAOP sizing under CSA
-          Z662 and ASME B31.4 / B31.8.
+          checks, design-factor wall thickness and MAOP sizing under CSA Z662
+          and ASME B31.4 / B31.8, and standalone pipe volume and displacement
+          estimates.
         </p>
         <div className="hero-actions">
           <Link className="btn btn-primary" href="/calculators/hydrostatic-test">
@@ -20,6 +21,9 @@ export default function HomePage() {
           </Link>
           <Link className="btn btn-ghost" href="/calculators/wall-thickness">
             Open wall thickness calculator
+          </Link>
+          <Link className="btn btn-ghost" href="/calculators/pipe-volume">
+            Open pipe volume calculator
           </Link>
         </div>
       </section>
@@ -53,9 +57,11 @@ export default function HomePage() {
           selected-code factor times MOP / MAOP, and low-point pressure at or
           below 100% SMYS. The wall thickness calculator uses the
           pressure-design equation with F, E, and T, D/t slenderness of 140 or
-          less, and a multi-standard comparison grid. Neither tool covers hold
-          time, test medium, fittings, or other code clauses. They are not a
-          full code review and they are not stamped design.
+          less, and a multi-standard comparison grid. The volume calculator
+          estimates line fill, fill mass, displacement time, and chemical
+          dose from OD, wall, length, density, rate, and ppm. None of the
+          tools cover hold time, test medium, fittings, or other code clauses.
+          They are not a full code review and they are not stamped design.
         </p>
       </section>
 
@@ -64,8 +70,9 @@ export default function HomePage() {
         <p>
           These calculators are an engineering aid. They are not stamped design,
           a permit, or a substitute for a professional engineer of record.
-          Confirm inputs, units, and the CSA Z662, ASME, or 49 CFR requirements
-          that apply to your project before you use a result in the field.
+          Volume and displacement results are estimates only. Confirm inputs,
+          units, and the CSA Z662, ASME, or 49 CFR requirements that apply to
+          your project before you use a result in the field.
         </p>
       </aside>
     </>

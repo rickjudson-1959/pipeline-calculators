@@ -15,6 +15,8 @@ export const MM_PER_IN = 25.4;
 export const FT_PER_M = 3.28084;
 export const PSI_PER_MPA = 145.038;
 export const PSI_PER_KPA = 0.145038;
+export const LB_PER_CUFT_PER_KG_M3 = 0.062428;
+export const BBL_PER_M3_RATE = 6.28981;
 
 export type HydroUnitLabels = {
   diameter: string;
@@ -216,6 +218,114 @@ export function convertWallValues<T extends Record<WallUnitField, number>>(
     tnom: convertWallField("tnom", values.tnom, from, to),
     jointE: convertWallField("jointE", values.jointE, from, to),
     tempT: convertWallField("tempT", values.tempT, from, to),
+  };
+}
+
+export type VolumeUnitField = "od" | "wt" | "length" | "density" | "rate" | "dosing";
+
+export type VolumeUnitLabels = {
+  diameter: string;
+  length: string;
+  volume: string;
+  density: string;
+  rate: string;
+  dosing: string;
+  mass: string;
+  chemical: string;
+  time: string;
+  gradient: string;
+};
+
+export function volumeUnitLabels(unitSystem: UnitSystem): VolumeUnitLabels {
+  if (unitSystem === "metric") {
+    return {
+      diameter: "mm",
+      length: "m",
+      volume: "m3",
+      density: "kg/m3",
+      rate: "m3/hr",
+      dosing: "ppm",
+      mass: "t",
+      chemical: "L",
+      time: "h",
+      gradient: "m3/km",
+    };
+  }
+
+  return {
+    diameter: "in",
+    length: "ft",
+    volume: "bbls",
+    density: "lb/ft3",
+    rate: "bbl/hr",
+    dosing: "ppm",
+    mass: "lb",
+    chemical: "gal",
+    time: "h",
+    gradient: "bbl/mi",
+  };
+}
+
+export function convertDensity(value: number, from: UnitSystem, to: UnitSystem): number {
+  if (from === to) {
+    return value;
+  }
+  return from === "metric" ? value * LB_PER_CUFT_PER_KG_M3 : value / LB_PER_CUFT_PER_KG_M3;
+}
+
+export function convertVolumeRate(value: number, from: UnitSystem, to: UnitSystem): number {
+  if (from === to) {
+    return value;
+  }
+  return from === "metric" ? value * BBL_PER_M3_RATE : value / BBL_PER_M3_RATE;
+}
+
+export function convertVolumeField(
+  key: VolumeUnitField,
+  value: number,
+  from: UnitSystem,
+  to: UnitSystem,
+): number {
+  if (from === to) {
+    return value;
+  }
+
+  switch (key) {
+    case "od":
+    case "wt":
+      return convertDiameter(value, from, to);
+    case "length":
+      return convertLength(value, from, to);
+    case "density":
+      return convertDensity(value, from, to);
+    case "rate":
+      return convertVolumeRate(value, from, to);
+    case "dosing":
+      return value;
+    default: {
+      const exhaustive: never = key;
+      return exhaustive;
+    }
+  }
+}
+
+export function convertVolumeValues<T extends Record<VolumeUnitField, number>>(
+  values: T,
+  from: UnitSystem,
+  to: UnitSystem,
+): T {
+  if (from === to) {
+    return { ...values };
+  }
+
+  return {
+    ...values,
+    od: convertVolumeField("od", values.od, from, to),
+    wt: convertVolumeField("wt", values.wt, from, to),
+    length: convertVolumeField("length", values.length, from, to),
+    density: convertVolumeField("density", values.density, from, to),
+    rate: convertVolumeField("rate", values.rate, from, to),
+    dosing: convertVolumeField("dosing", values.dosing, from, to),
   };
 }
 

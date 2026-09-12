@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: "%s | Pipe-Up Pipeline Calculators",
   },
   description:
-    "Field and office pipeline calculators for hydrostatic test planning and wall thickness / MAOP sizing in Canada and the United States, under CSA Z662 and ASME B31.4 / B31.8.",
+    "Field and office pipeline calculators for hydrostatic test planning, wall thickness / MAOP sizing, and pipe volume and displacement estimates in Canada and the United States, under CSA Z662 and ASME B31.4 / B31.8.",
   applicationName: "Pipe-Up Pipeline Calculators",
   authors: [{ name: "Rick Judson" }],
   keywords: [
@@ -46,6 +46,8 @@ export const metadata: Metadata = {
     "49 CFR 192",
     "49 CFR 195",
     "fill volume",
+    "pipe volume",
+    "pipeline displacement",
     "wall thickness",
     "MAOP",
     "Pipe-Up",
