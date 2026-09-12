@@ -135,6 +135,78 @@ export function convertHydroValues<T extends Record<HydroUnitField, number>>(
   };
 }
 
+export type WallUnitField = "od" | "smys" | "pDesign" | "corr" | "tnom";
+
+export type WallUnitLabels = {
+  diameter: string;
+  thickness: string;
+  smys: string;
+  pressure: string;
+};
+
+export function wallUnitLabels(unitSystem: UnitSystem): WallUnitLabels {
+  if (unitSystem === "metric") {
+    return {
+      diameter: "mm",
+      thickness: "mm",
+      smys: "MPa",
+      pressure: "kPa",
+    };
+  }
+
+  return {
+    diameter: "in",
+    thickness: "in",
+    smys: "PSI",
+    pressure: "PSI",
+  };
+}
+
+export function convertWallField(
+  key: WallUnitField,
+  value: number,
+  from: UnitSystem,
+  to: UnitSystem,
+): number {
+  if (from === to) {
+    return value;
+  }
+
+  switch (key) {
+    case "od":
+    case "corr":
+    case "tnom":
+      return convertDiameter(value, from, to);
+    case "smys":
+      return convertSmys(value, from, to);
+    case "pDesign":
+      return convertPressure(value, from, to);
+    default: {
+      const exhaustive: never = key;
+      return exhaustive;
+    }
+  }
+}
+
+export function convertWallValues<T extends Record<WallUnitField, number>>(
+  values: T,
+  from: UnitSystem,
+  to: UnitSystem,
+): T {
+  if (from === to) {
+    return { ...values };
+  }
+
+  return {
+    ...values,
+    od: convertWallField("od", values.od, from, to),
+    smys: convertWallField("smys", values.smys, from, to),
+    pDesign: convertWallField("pDesign", values.pDesign, from, to),
+    corr: convertWallField("corr", values.corr, from, to),
+    tnom: convertWallField("tnom", values.tnom, from, to),
+  };
+}
+
 export function formatInputNumber(value: number): string {
   if (!Number.isFinite(value)) {
     return "";

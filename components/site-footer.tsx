@@ -8,9 +8,9 @@ export function SiteFooter() {
           code interpretation, and not a substitute for the engineer of record.
         </p>
         <p className="footer-meta">
-          Encoded checks only: high-point pressure at or above the selected code
-          factor times MOP / MAOP, and low-point pressure at or below 100% SMYS
-          Barlow yield. No ads and no email gate.
+          Encoded checks only: hydrostatic high and low elevation gates, and
+          design-factor wall thickness / MAOP compliance. No ads and no email
+          gate.
         </p>
       </div>
     </footer>

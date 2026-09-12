@@ -9,14 +9,17 @@ export default function HomePage() {
         <p className="hero-kicker">Pipe-Up</p>
         <h1>Pipeline calculators for the field and the office</h1>
         <p className="lede">
-          A small toolkit for pipeline work in Canada and the United States. The
-          first live tool is a hydrostatic test calculator for fill volume and
-          elevation pressure checks under CSA Z662 and ASME B31.4 / B31.8 (49
-          CFR).
+          A small toolkit for pipeline work in Canada and the United States.
+          Live tools cover hydrostatic test fill volume and elevation pressure
+          checks, plus design-factor wall thickness and MAOP sizing under CSA
+          Z662 and ASME B31.4 / B31.8.
         </p>
         <div className="hero-actions">
           <Link className="btn btn-primary" href="/calculators/hydrostatic-test">
             Open hydrostatic test calculator
+          </Link>
+          <Link className="btn btn-ghost" href="/calculators/wall-thickness">
+            Open wall thickness calculator
           </Link>
         </div>
       </section>
@@ -37,19 +40,22 @@ export default function HomePage() {
         <p>
           CSA Z662 is the Canadian standard for oil and gas pipeline systems.
           ASME B31.4 and 49 CFR 195 cover US liquids. ASME B31.8 and 49 CFR 192
-          cover US gas, with a high-point factor that changes by class location.
-          Strength tests are commonly planned so the high point still meets a
-          minimum factor on MOP or MAOP, while the low point stays at or below
-          pipe yield. Water also adds head with elevation, so the same target
-          pressure is not the pressure at every point on the section.
+          cover US gas, with both a hydrostatic high-point factor and a wall
+          design factor that change by class location. Strength tests are
+          commonly planned so the high point still meets a minimum factor on
+          MOP or MAOP, while the low point stays at or below pipe yield. Wall
+          sizing uses the same Barlow hoop-stress idea with a location-class
+          design factor F.
         </p>
         <p>
-          This site applies only the two numeric gates encoded in the hydrostatic
-          tool: high-point pressure at or above the selected-code factor times
-          MOP / MAOP, and low-point pressure at or below 100% SMYS using the
-          Barlow yield formula. It does not cover hold time, test medium,
-          temperature, fittings, or other code clauses. It is not a full code
-          review and it is not stamped design.
+          This site applies only the numeric checks encoded in the live tools.
+          The hydrostatic calculator uses high-point pressure at or above the
+          selected-code factor times MOP / MAOP, and low-point pressure at or
+          below 100% SMYS. The wall thickness calculator uses Barlow
+          design-factor thickness and MAOP for the selected location class.
+          Neither tool covers hold time, test medium, temperature derating,
+          joint factor E, fittings, or other code clauses. They are not a full
+          code review and they are not stamped design.
         </p>
       </section>
 

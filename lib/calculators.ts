@@ -18,10 +18,12 @@ export const CALCULATORS: CalculatorListing[] = [
       "Fill volume, bleach dose, Barlow yield pressure, and high/low elevation pressure gates for CSA Z662 and ASME B31.4 / B31.8 / 49 CFR test planning.",
   },
   {
-    slug: "pressure-drop",
-    title: "Pressure Drop",
-    status: "coming-soon",
-    summary: "Line pressure-loss estimating for a later release.",
+    slug: "wall-thickness",
+    title: "Pipeline Wall Thickness",
+    href: "/calculators/wall-thickness",
+    status: "live",
+    summary:
+      "Design-factor minimum wall and MAOP check for ASME B31.4, ASME B31.8 location class, and CSA Z662 Class 1.",
   },
   {
     slug: "pipe-volume",
