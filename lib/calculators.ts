@@ -15,7 +15,7 @@ export const CALCULATORS: CalculatorListing[] = [
     href: "/calculators/hydrostatic-test",
     status: "live",
     summary:
-      "Fill volume, bleach dose, Barlow yield pressure, and high/low elevation pressure gates for CSA Z662 test planning.",
+      "Fill volume, bleach dose, Barlow yield pressure, and high/low elevation pressure gates for CSA Z662 and ASME B31.4 / B31.8 / 49 CFR test planning.",
   },
   {
     slug: "pressure-drop",

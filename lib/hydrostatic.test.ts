@@ -4,13 +4,29 @@ import {
   BBL_PER_M3,
   BLEACH_L_PER_M3,
   calculateHydrostatic,
+  CODE_STANDARDS,
+  CUFT_PER_BBL,
+  DEFAULT_CODE_STANDARD,
   DEFAULT_HYDRO_INPUTS,
+  DEFAULT_UNIT_SYSTEM,
+  GAL_PER_L,
+  getHighPointFactor,
   HEAD_KPA_PER_M,
-  HIGH_POINT_MOP_FACTOR,
+  HEAD_PSI_PER_FT,
+  HIGH_POINT_FACTORS,
+  L_PER_M3,
   validateHydroInputs,
 } from "./hydrostatic.ts";
+import {
+  convertHydroField,
+  convertHydroValues,
+  FT_PER_M,
+  MM_PER_IN,
+  PSI_PER_KPA,
+  PSI_PER_MPA,
+} from "./units.ts";
 
-test("default inputs match the encoded hydrostatic formulas exactly", () => {
+test("default metric CSA inputs match the encoded hydrostatic formulas exactly", () => {
   const od = 508;
   const wt = 6.6;
   const smys = 483;
@@ -23,9 +39,8 @@ test("default inputs match the encoded hydrostatic formulas exactly", () => {
 
   const id = od - 2 * wt;
   const area = (Math.PI * Math.pow(id / 1000.0, 2)) / 4.0;
-  const cubes = area * length;
-  const bbls = cubes * 6.28981;
-  const bleach = cubes * 1.0;
+  const fillVolume = area * length;
+  const bleach = fillVolume * 1.0;
   const pYield = (2 * (smys * 1000) * wt) / od;
   const pHigh = pTarget + (elTest - elHigh) * 9.81;
   const pLow = pTarget + (elTest - elLow) * 9.81;
@@ -42,15 +57,17 @@ test("default inputs match the encoded hydrostatic formulas exactly", () => {
   assert.equal(DEFAULT_HYDRO_INPUTS.elHigh, elHigh);
   assert.equal(DEFAULT_HYDRO_INPUTS.elTest, elTest);
   assert.equal(DEFAULT_HYDRO_INPUTS.elLow, elLow);
+  assert.equal(DEFAULT_UNIT_SYSTEM, "metric");
+  assert.equal(DEFAULT_CODE_STANDARD, "csa_z662");
 
   assert.equal(actual.id, id);
   assert.equal(actual.area, area);
-  assert.equal(actual.cubes, cubes);
-  assert.equal(actual.bbls, bbls);
+  assert.equal(actual.fillVolume, fillVolume);
   assert.equal(actual.bleach, bleach);
   assert.equal(actual.pYield, pYield);
   assert.equal(actual.pHigh, pHigh);
   assert.equal(actual.pLow, pLow);
+  assert.equal(actual.minFactor, 1.25);
   assert.equal(actual.minPHigh, minPHigh);
   assert.equal(actual.isHighOk, pHigh >= minPHigh);
   assert.equal(actual.isLowOk, pLow <= pYield);
@@ -58,11 +75,101 @@ test("default inputs match the encoded hydrostatic formulas exactly", () => {
   assert.equal(actual.isLowOk, true);
 });
 
+test("US customary path uses inches, PSI, feet, barrels, and gallons", () => {
+  const inputs = convertHydroValues(DEFAULT_HYDRO_INPUTS, "metric", "us");
+  const { od, wt, smys, length, mop, pTarget, elHigh, elTest, elLow } = inputs;
+
+  const id = od - 2 * wt;
+  const area = (Math.PI * Math.pow(id / 12.0, 2)) / 4.0;
+  const volCuFt = area * length;
+  const fillVolume = volCuFt / 5.61458;
+  const bleach = (fillVolume / 6.28981) * 0.264172 * 1000;
+  const pYield = (2 * smys * wt) / od;
+  const pHigh = pTarget + (elTest - elHigh) * 0.433;
+  const pLow = pTarget + (elTest - elLow) * 0.433;
+  const minPHigh = 1.25 * mop;
+
+  const actual = calculateHydrostatic(inputs, {
+    unitSystem: "us",
+    code: "asme_b314",
+  });
+
+  assert.equal(od, 508 / 25.4);
+  assert.equal(actual.id, id);
+  assert.equal(actual.area, area);
+  assert.equal(actual.fillVolume, fillVolume);
+  assert.equal(actual.bleach, bleach);
+  assert.equal(actual.pYield, pYield);
+  assert.equal(actual.pHigh, pHigh);
+  assert.equal(actual.pLow, pLow);
+  assert.equal(actual.minFactor, 1.25);
+  assert.equal(actual.minPHigh, minPHigh);
+  assert.equal(actual.isHighOk, pHigh >= minPHigh);
+  assert.equal(actual.isLowOk, pLow <= pYield);
+});
+
+test("ASME B31.8 Class 4 uses a 1.50 high-point factor", () => {
+  const actual = calculateHydrostatic(DEFAULT_HYDRO_INPUTS, {
+    unitSystem: "metric",
+    code: "asme_b318_c4",
+  });
+
+  assert.equal(getHighPointFactor("asme_b318_c4"), 1.5);
+  assert.equal(actual.minFactor, 1.5);
+  assert.equal(actual.minPHigh, 1.5 * DEFAULT_HYDRO_INPUTS.mop);
+  assert.equal(actual.isHighOk, false);
+  assert.equal(actual.isLowOk, true);
+});
+
+test("ASME B31.8 Class 1 uses a 1.10 high-point factor and can change the gate", () => {
+  const actual = calculateHydrostatic(DEFAULT_HYDRO_INPUTS, {
+    unitSystem: "metric",
+    code: "asme_b318_c1",
+  });
+
+  assert.equal(actual.minFactor, 1.1);
+  assert.equal(actual.minPHigh, 1.1 * DEFAULT_HYDRO_INPUTS.mop);
+  assert.equal(actual.isHighOk, true);
+  assert.equal(actual.isLowOk, true);
+});
+
+test("unit conversion constants and field mapping match the approved prototype", () => {
+  assert.equal(convertHydroField("od", 508, "metric", "us"), 508 / MM_PER_IN);
+  assert.equal(convertHydroField("wt", 6.6, "metric", "us"), 6.6 / MM_PER_IN);
+  assert.equal(convertHydroField("length", 5000, "metric", "us"), 5000 * FT_PER_M);
+  assert.equal(convertHydroField("elHigh", 350, "metric", "us"), 350 * FT_PER_M);
+  assert.equal(convertHydroField("smys", 483, "metric", "us"), 483 * PSI_PER_MPA);
+  assert.equal(convertHydroField("mop", 9930, "metric", "us"), 9930 * PSI_PER_KPA);
+  assert.equal(convertHydroField("pTarget", 12413, "metric", "us"), 12413 * PSI_PER_KPA);
+
+  const us = convertHydroValues(DEFAULT_HYDRO_INPUTS, "metric", "us");
+  const back = convertHydroValues(us, "us", "metric");
+  assert.equal(back.od, DEFAULT_HYDRO_INPUTS.od);
+  assert.equal(back.wt, DEFAULT_HYDRO_INPUTS.wt);
+  assert.equal(back.smys, DEFAULT_HYDRO_INPUTS.smys);
+  assert.equal(back.length, DEFAULT_HYDRO_INPUTS.length);
+  assert.equal(back.mop, DEFAULT_HYDRO_INPUTS.mop);
+  assert.equal(back.pTarget, DEFAULT_HYDRO_INPUTS.pTarget);
+  assert.equal(back.elHigh, DEFAULT_HYDRO_INPUTS.elHigh);
+  assert.equal(back.elTest, DEFAULT_HYDRO_INPUTS.elTest);
+  assert.equal(back.elLow, DEFAULT_HYDRO_INPUTS.elLow);
+});
+
 test("shared constants stay aligned with the encoded formulas", () => {
   assert.equal(BBL_PER_M3, 6.28981);
+  assert.equal(CUFT_PER_BBL, 5.61458);
+  assert.equal(GAL_PER_L, 0.264172);
   assert.equal(BLEACH_L_PER_M3, 1.0);
   assert.equal(HEAD_KPA_PER_M, 9.81);
-  assert.equal(HIGH_POINT_MOP_FACTOR, 1.25);
+  assert.equal(HEAD_PSI_PER_FT, 0.433);
+  assert.equal(L_PER_M3, 1000);
+  assert.equal(HIGH_POINT_FACTORS.csa_z662, 1.25);
+  assert.equal(HIGH_POINT_FACTORS.asme_b314, 1.25);
+  assert.equal(HIGH_POINT_FACTORS.asme_b318_c1, 1.1);
+  assert.equal(HIGH_POINT_FACTORS.asme_b318_c2, 1.25);
+  assert.equal(HIGH_POINT_FACTORS.asme_b318_c3, 1.4);
+  assert.equal(HIGH_POINT_FACTORS.asme_b318_c4, 1.5);
+  assert.equal(CODE_STANDARDS.length, 6);
 });
 
 test("validation catches a non-positive inside diameter", () => {

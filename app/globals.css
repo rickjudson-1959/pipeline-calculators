@@ -375,10 +375,67 @@ a {
   font-size: 1.35rem;
 }
 
-.field label {
+.setup-grid {
+  display: grid;
+  gap: 1rem 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.field label,
+.field-label {
   display: block;
-  margin-bottom: 0.35rem;
+  margin: 0 0 0.35rem;
   font-weight: 700;
+}
+
+.field-hint {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.unit-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.unit-toggle button {
+  flex: 1;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--navy);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.unit-toggle button.is-active {
+  background: var(--navy);
+  color: #fff;
+}
+
+.unit-toggle button:focus-visible {
+  outline: 2px solid var(--steel);
+  outline-offset: -2px;
+}
+
+.field select {
+  width: 100%;
+  border: 0;
+  padding: 0.7rem 0.8rem;
+  font: inherit;
+  background: transparent;
+  min-height: 48px;
+}
+
+.field select:focus {
+  outline: none;
 }
 
 .field-control {

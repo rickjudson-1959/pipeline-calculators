@@ -3,13 +3,24 @@
 import { useMemo, useState } from "react";
 import {
   calculateHydrostatic,
+  CODE_STANDARDS,
+  DEFAULT_CODE_STANDARD,
   DEFAULT_HYDRO_INPUTS,
+  formatFactor,
   formatFixed,
-  HIGH_POINT_MOP_FACTOR,
+  getHighPointFactor,
   parseNumericInput,
   validateHydroInputs,
+  type CodeStandard,
   type HydroInputs,
 } from "@/lib/hydrostatic";
+import {
+  convertHydroField,
+  formatInputNumber,
+  hydroUnitLabels,
+  type HydroUnitField,
+  type UnitSystem,
+} from "@/lib/units";
 
 type FieldKey = keyof HydroInputs;
 
@@ -20,20 +31,38 @@ type FieldConfig = {
   unit: string;
 };
 
-const PIPE_FIELDS: FieldConfig[] = [
-  { key: "od", id: "od", label: "Outside diameter", unit: "mm" },
-  { key: "wt", id: "wt", label: "Wall thickness", unit: "mm" },
-  { key: "smys", id: "smys", label: "SMYS", unit: "MPa" },
-  { key: "length", id: "length", label: "Section length", unit: "m" },
-  { key: "mop", id: "mop", label: "Licensed MOP", unit: "kPa" },
-  { key: "pTarget", id: "p-target", label: "Target test pressure", unit: "kPa" },
+const FIELD_KEYS: FieldKey[] = [
+  "od",
+  "wt",
+  "smys",
+  "length",
+  "mop",
+  "pTarget",
+  "elHigh",
+  "elTest",
+  "elLow",
 ];
 
-const ELEVATION_FIELDS: FieldConfig[] = [
-  { key: "elHigh", id: "el-high", label: "High-point elevation", unit: "m" },
-  { key: "elTest", id: "el-test", label: "Test-point elevation", unit: "m" },
-  { key: "elLow", id: "el-low", label: "Low-point elevation", unit: "m" },
-];
+function pipeFields(unitSystem: UnitSystem): FieldConfig[] {
+  const units = hydroUnitLabels(unitSystem);
+  return [
+    { key: "od", id: "od", label: "Outside diameter", unit: units.diameter },
+    { key: "wt", id: "wt", label: "Wall thickness", unit: units.diameter },
+    { key: "smys", id: "smys", label: "SMYS", unit: units.smys },
+    { key: "length", id: "length", label: "Section length", unit: units.length },
+    { key: "mop", id: "mop", label: "MOP / MAOP", unit: units.pressure },
+    { key: "pTarget", id: "p-target", label: "Target test pressure", unit: units.pressure },
+  ];
+}
+
+function elevationFields(unitSystem: UnitSystem): FieldConfig[] {
+  const units = hydroUnitLabels(unitSystem);
+  return [
+    { key: "elHigh", id: "el-high", label: "High-point elevation", unit: units.elevation },
+    { key: "elTest", id: "el-test", label: "Test-point elevation", unit: units.elevation },
+    { key: "elLow", id: "el-low", label: "Low-point elevation", unit: units.elevation },
+  ];
+}
 
 function defaultFieldState(): Record<FieldKey, string> {
   return {
@@ -47,6 +76,22 @@ function defaultFieldState(): Record<FieldKey, string> {
     elTest: String(DEFAULT_HYDRO_INPUTS.elTest),
     elLow: String(DEFAULT_HYDRO_INPUTS.elLow),
   };
+}
+
+function convertFieldState(
+  fields: Record<FieldKey, string>,
+  from: UnitSystem,
+  to: UnitSystem,
+): Record<FieldKey, string> {
+  const next = { ...fields };
+  for (const key of FIELD_KEYS) {
+    const parsed = parseNumericInput(fields[key]);
+    if (parsed === null) {
+      continue;
+    }
+    next[key] = formatInputNumber(convertHydroField(key as HydroUnitField, parsed, from, to));
+  }
+  return next;
 }
 
 function NumberField({
@@ -99,11 +144,14 @@ function ElevationProfile({
   elHigh,
   elTest,
   elLow,
+  unitSystem,
 }: {
   elHigh: number;
   elTest: number;
   elLow: number;
+  unitSystem: UnitSystem;
 }) {
+  const units = hydroUnitLabels(unitSystem);
   const points = [
     { x: 40, label: "High", value: elHigh },
     { x: 200, label: "Test", value: elTest },
@@ -126,7 +174,7 @@ function ElevationProfile({
       <svg
         viewBox="0 0 400 130"
         role="img"
-        aria-label={`Elevation sketch. High ${elHigh} metres, test ${elTest} metres, low ${elLow} metres.`}
+        aria-label={`Elevation sketch. High ${elHigh} ${units.elevation}, test ${elTest} ${units.elevation}, low ${elLow} ${units.elevation}.`}
       >
         <line x1="24" y1="20" x2="24" y2="100" stroke="#c5d0dc" strokeWidth="1" />
         <line x1="24" y1="100" x2="384" y2="100" stroke="#c5d0dc" strokeWidth="1" />
@@ -141,15 +189,21 @@ function ElevationProfile({
         ))}
       </svg>
       <figcaption>
-        Hydrostatic head uses 9.81 kPa per metre between the test point and each
-        elevation.
+        Hydrostatic head uses {units.head} between the test point and each elevation.
       </figcaption>
     </figure>
   );
 }
 
+function isCodeStandard(value: string): value is CodeStandard {
+  return CODE_STANDARDS.some((standard) => standard.id === value);
+}
+
 export function HydrostaticCalculator() {
+  const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric");
+  const [code, setCode] = useState<CodeStandard>(DEFAULT_CODE_STANDARD);
   const [fields, setFields] = useState(defaultFieldState);
+  const units = hydroUnitLabels(unitSystem);
 
   const parsed = useMemo(() => {
     const values = {} as Record<FieldKey, number | null>;
@@ -175,28 +229,111 @@ export function HydrostaticCalculator() {
       : null;
 
   const errors = ready ? validateHydroInputs(ready) : ["Enter a number in every field."];
-  const result = ready && errors.length === 0 ? calculateHydrostatic(ready) : null;
+  const result =
+    ready && errors.length === 0
+      ? calculateHydrostatic(ready, { unitSystem, code })
+      : null;
+  const factorLabel = formatFactor(getHighPointFactor(code));
 
   function updateField(key: FieldKey, value: string) {
     setFields((current) => ({ ...current, [key]: value }));
+  }
+
+  function changeUnitSystem(next: UnitSystem) {
+    if (next === unitSystem) {
+      return;
+    }
+    setFields((current) => convertFieldState(current, unitSystem, next));
+    setUnitSystem(next);
+  }
+
+  function resetDefaults() {
+    setUnitSystem("metric");
+    setCode(DEFAULT_CODE_STANDARD);
+    setFields(defaultFieldState());
   }
 
   return (
     <div className="calculator">
       <div className="calculator-toolbar">
         <p className="live-note">Results update as you type.</p>
-        <button type="button" className="btn btn-ghost" onClick={() => setFields(defaultFieldState())}>
+        <button type="button" className="btn btn-ghost" onClick={resetDefaults}>
           Reset defaults
         </button>
       </div>
 
-      <section className="panel" aria-labelledby="pipe-params-heading">
+      <section className="panel" aria-labelledby="setup-heading">
         <div className="panel-head">
           <p className="panel-kicker">Section 1</p>
+          <h2 id="setup-heading">Units &amp; Code</h2>
+        </div>
+        <div className="setup-grid">
+          <div className="field">
+            <p id="unit-system-label" className="field-label">
+              Unit system
+            </p>
+            <div
+              className="unit-toggle"
+              role="radiogroup"
+              aria-labelledby="unit-system-label"
+            >
+              <button
+                type="button"
+                role="radio"
+                aria-checked={unitSystem === "metric"}
+                className={unitSystem === "metric" ? "is-active" : ""}
+                onClick={() => changeUnitSystem("metric")}
+              >
+                Metric SI
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={unitSystem === "us"}
+                className={unitSystem === "us" ? "is-active" : ""}
+                onClick={() => changeUnitSystem("us")}
+              >
+                US Customary
+              </button>
+            </div>
+            <p className="field-hint">
+              Switching units converts the numbers already in the form.
+            </p>
+          </div>
+          <div className="field">
+            <label htmlFor="code-standard">Regulatory code standard</label>
+            <div className="field-control">
+              <select
+                id="code-standard"
+                name="code-standard"
+                value={code}
+                onChange={(event) => {
+                  if (isCodeStandard(event.target.value)) {
+                    setCode(event.target.value);
+                  }
+                }}
+              >
+                {CODE_STANDARDS.map((standard) => (
+                  <option key={standard.id} value={standard.id}>
+                    {standard.label} ({formatFactor(standard.minFactor)} x)
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p className="field-hint">
+              Sets the high-point minimum to {factorLabel} x MOP / MAOP.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="panel" aria-labelledby="pipe-params-heading">
+        <div className="panel-head">
+          <p className="panel-kicker">Section 2</p>
           <h2 id="pipe-params-heading">Pipe &amp; Test Parameters</h2>
         </div>
         <div className="field-grid">
-          {PIPE_FIELDS.map((field) => (
+          {pipeFields(unitSystem).map((field) => (
             <NumberField
               key={field.key}
               field={field}
@@ -209,11 +346,11 @@ export function HydrostaticCalculator() {
 
       <section className="panel" aria-labelledby="elevation-heading">
         <div className="panel-head">
-          <p className="panel-kicker">Section 2</p>
+          <p className="panel-kicker">Section 3</p>
           <h2 id="elevation-heading">Elevation</h2>
         </div>
         <div className="field-grid">
-          {ELEVATION_FIELDS.map((field) => (
+          {elevationFields(unitSystem).map((field) => (
             <NumberField
               key={field.key}
               field={field}
@@ -227,63 +364,71 @@ export function HydrostaticCalculator() {
             elHigh={ready.elHigh}
             elTest={ready.elTest}
             elLow={ready.elLow}
+            unitSystem={unitSystem}
           />
         ) : null}
       </section>
 
       <section className="panel" aria-labelledby="fill-heading">
         <div className="panel-head">
-          <p className="panel-kicker">Section 3</p>
+          <p className="panel-kicker">Section 4</p>
           <h2 id="fill-heading">Fill Volume</h2>
         </div>
         <div className="result-grid" aria-live="polite">
           <ResultStat
             label="Inside diameter"
-            value={result ? `${formatFixed(result.id, 1)} mm` : "--"}
+            value={result ? `${formatFixed(result.id, unitSystem === "metric" ? 1 : 3)} ${units.diameter}` : "--"}
             hint="OD minus two wall thicknesses"
           />
           <ResultStat
-            label="CUBES"
-            value={result ? `${formatFixed(result.cubes, 3)} m3` : "--"}
-            hint="Internal area times section length"
+            label="Fill volume"
+            value={result ? `${formatFixed(result.fillVolume, 3)} ${units.volume}` : "--"}
+            hint={
+              unitSystem === "metric"
+                ? "Internal area times section length"
+                : "Internal area (ft2) times length, divided by 5.61458"
+            }
           />
           <ResultStat
-            label="Barrels"
-            value={result ? formatFixed(result.bbls, 2) : "--"}
-            hint="CUBES x 6.28981"
-          />
-          <ResultStat
-            label="Bleach"
-            value={result ? `${formatFixed(result.bleach, 2)} L` : "--"}
-            hint="1 L per cubic metre"
+            label="Bleach dose"
+            value={result ? `${formatFixed(result.bleach, 2)} ${units.bleach}` : "--"}
+            hint={
+              unitSystem === "metric"
+                ? "1 L per cubic metre"
+                : "Barrel volume converted at 1 L per m3, shown in gallons"
+            }
           />
         </div>
       </section>
 
       <section className="panel" aria-labelledby="stress-heading">
         <div className="panel-head">
-          <p className="panel-kicker">Section 4</p>
+          <p className="panel-kicker">Section 5</p>
           <h2 id="stress-heading">Stress &amp; Compliance</h2>
         </div>
         <div className="result-grid" aria-live="polite">
           <ResultStat
             label="100% SMYS yield pressure"
-            value={result ? `${formatFixed(result.pYield, 1)} kPa` : "--"}
-            hint="Barlow. SMYS in MPa converted to kPa."
+            value={result ? `${formatFixed(result.pYield, 1)} ${units.pressure}` : "--"}
+            hint={
+              unitSystem === "metric"
+                ? "Barlow. SMYS in MPa converted to kPa."
+                : "Barlow. SMYS already in PSI."
+            }
           />
           <ResultStat
             label="High-point pressure"
-            value={result ? `${formatFixed(result.pHigh, 1)} kPa` : "--"}
+            value={result ? `${formatFixed(result.pHigh, 1)} ${units.pressure}` : "--"}
             hint="Target plus head from test point to high point"
           />
           <ResultStat
             label="Low-point pressure"
-            value={result ? `${formatFixed(result.pLow, 1)} kPa` : "--"}
+            value={result ? `${formatFixed(result.pLow, 1)} ${units.pressure}` : "--"}
             hint="Target plus head from test point to low point"
           />
           <ResultStat
-            label="1.25 x licensed MOP"
-            value={result ? `${formatFixed(result.minPHigh, 1)} kPa` : "--"}
+            label={`${factorLabel} x MOP / MAOP`}
+            value={result ? `${formatFixed(result.minPHigh, 1)} ${units.pressure}` : "--"}
             hint="Minimum high-point gate used by this tool"
           />
         </div>
@@ -291,14 +436,14 @@ export function HydrostaticCalculator() {
         <div className="gate-grid">
           <article className={`gate ${result ? (result.isHighOk ? "is-pass" : "is-fail") : ""}`}>
             <p className="gate-kicker">High-point gate</p>
-            <h3>High-point pressure at or above 1.25 x MOP</h3>
+            <h3>High-point pressure at or above {factorLabel} x MOP / MAOP</h3>
             <p className="gate-status">
               {result ? (result.isHighOk ? "Meets gate" : "Does not meet gate") : "Awaiting inputs"}
             </p>
             {result && !result.isHighOk ? (
               <p>
-                High-point pressure is {formatFixed(result.minPHigh - result.pHigh, 1)} kPa
-                below {HIGH_POINT_MOP_FACTOR.toFixed(2)} x MOP.
+                High-point pressure is {formatFixed(result.minPHigh - result.pHigh, 1)} {units.pressure}{" "}
+                below {factorLabel} x MOP / MAOP.
               </p>
             ) : null}
           </article>
@@ -310,7 +455,7 @@ export function HydrostaticCalculator() {
             </p>
             {result && !result.isLowOk ? (
               <p>
-                Low-point pressure is {formatFixed(result.pLow - result.pYield, 1)} kPa
+                Low-point pressure is {formatFixed(result.pLow - result.pYield, 1)} {units.pressure}{" "}
                 above 100% SMYS yield.
               </p>
             ) : null}
