@@ -1,6 +1,6 @@
 # Pipeline Calculators
 
-Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, and a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates.
+Pipe-Up field and office calculators for pipeline work in Canada and the United States. This suite is complete for now. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates, and an ASME B31G / Modified B31G calculator for corroded-pipe remaining strength.
 
 This is an engineering aid, not stamped design.
 
@@ -26,17 +26,18 @@ Open [http://localhost:3000](http://localhost:3000).
 - Wall thickness calculator: `/calculators/wall-thickness`
 - Pipe volume calculator: `/calculators/pipe-volume`
 - Gas flow calculator: `/calculators/gas-flow`
+- B31G calculator: `/calculators/b31g`
 
 ## Test and verify
 
-Default metric math, a US Customary path, unit conversion, and extra code factors, volume formulas, or gas-flow equations are checked against the encoded formulas:
+Default metric math, a US Customary path, unit conversion, and extra code factors, volume formulas, gas-flow equations, or B31G remaining-strength formulas are checked against the encoded formulas:
 
 ```bash
 npm test
 npm run verify
 ```
 
-`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4), wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid), pipe-volume defaults (metric water-filled 508 mm example and the converted US path), and gas-flow defaults (metric 508 mm example and the converted US path).
+`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4), wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid), pipe-volume defaults (metric water-filled 508 mm example and the converted US path), gas-flow defaults (metric 508 mm example and the converted US path), and B31G defaults (metric 508 mm example and the converted US path).
 
 Hydrostatic metric defaults (508 mm OD, 6.6 mm WT, 483 MPa SMYS, 5000 m, 9930 kPa MOP, 12413 kPa target, elevations 350 / 310 / 300 m): the CSA / 1.25 high-point gate does not meet and the low-point gate meets 100% SMYS. That is expected from the formulas, not a page error. Switching the same inputs to ASME B31.8 Class 1 (1.10) meets the high-point gate.
 
@@ -45,6 +46,8 @@ Wall-thickness metric defaults (508 mm OD, 483 MPa SMYS, 9930 kPa design pressur
 Pipe-volume metric defaults (508 mm OD, 9.5 mm WT, 5000 m, 1000 kg/m3 water, 250 m3/hr, 500 ppm): ID is 489.0 mm, line fill is about 939.0 m3, volume per distance is about 187.8 m3/km, fill mass is about 939.0 t, fill time is about 3.76 h, and chemical dosage is about 469.5 L.
 
 Gas-flow metric defaults (P1 7000 kPa abs, P2 5000 kPa abs, γg 0.60, 508 mm OD, 9.5 mm WT, 50 km, E 0.92): ID is 489.0 mm, pressure drop is 2,000 kPa, Weymouth is about 8,157 10³ m3/d, Panhandle A is about 10,638 10³ m3/d, and Panhandle B is about 10,293 10³ m3/d. Phase 1 hardcodes Tf = 288.15 K, Z = 0.88, Tb = 288.15 K, and Pb = 101.325 kPa. The same inputs converted to US Customary are about 288 / 375 / 362 MMSCFD.
+
+B31G metric defaults (508 mm OD, 9.5 mm WT, 483 MPa SMYS, F 0.72, 2.5 mm depth, 150 mm axial length, 9930 kPa operating pressure): uncorroded MAOP is 13,007 kPa, d/t is 26.3%, P'_B31G is 13,007 kPa, P'_Mod is 13,007 kPa, Modified RSF is 100.0%, and the operating safety gate is SAFE AT OPERATING PRESSURE. Those safe pressures are capped at uncorroded MAOP. A 26% deep, 150 mm defect on this pipe does not derate below Barlow MAOP. Switching the same inputs to US Customary keeps the gate SAFE.
 
 ## Production build
 
@@ -113,3 +116,18 @@ The gas flow calculator applies only these estimates:
 - Results pause when length, gravity, or ID is not greater than 0, or when `P1² - P2²` is not greater than 0
 
 Unit toggle conversions: pressure by 0.145038, OD and WT by 25.4, length by 1.60934 (km to miles). Gas gravity and line efficiency do not convert. Tf, Z, Pb, and Tb are hardcoded in Phase 1. Gas flow results are estimates only. Do not treat them as stamped design.
+
+## Encoded B31G checks
+
+The B31G calculator applies only these checks:
+
+- Depth ratio `d/t`
+- Uncorroded MAOP `2 x WT x SMYS x F / OD` (metric SMYS in MPa converted to kPa)
+- Original B31G Folias `A = 0.893 L / sqrt(OD x WT)`. If A <= 4, `M = sqrt(1 + 0.6275 A^2 - 0.003375 A^4)`. If A > 4, `M = 0.032 A^2 + 3.29` and the strength term is `(1 - d/t)`
+- Original safe pressure uses flow stress `1.1 x SMYS` and, for A <= 4, `(1 - 0.6667 d/t) / (1 - 0.6667 d/t / M)`, then `min(MAOP, P'_raw)`
+- Modified B31G Folias `z = L^2 / (OD x WT)`. If z <= 50, `M = sqrt(1 + 0.6275 z - 0.003375 z^2)`. If z > 50, `M = 0.032 z + 3.29`
+- Modified safe pressure uses metric flow stress `(SMYS + 68.95) MPa` or US flow stress `SMYS + 10,000 PSI`, times `(1 - 0.85 d/t) / (1 - 0.85 d/t / M)`, then `min(MAOP, P'_raw)`
+- Modified RSF is `P'_Mod / MAOP`
+- Operating gate: `REJECT (>80% DEPTH)` when `d/t > 0.80`. Otherwise `SAFE AT OPERATING PRESSURE` when operating pressure is at or below `P'_Mod`, or `DERATING REQUIRED`
+
+Unit toggle conversions: OD, wall, defect depth, and defect length by 25.4, SMYS by 145.038, operating pressure by 0.145038. Design factor F does not convert. Results pause when OD or WT is not greater than 0, depth or length is negative, or a Folias denominator is not greater than 0. B31G results are an engineering aid only, not a stamped integrity assessment.

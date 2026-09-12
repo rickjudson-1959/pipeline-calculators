@@ -2,14 +2,14 @@
   "name": "pipeline-calculators",
   "version": "0.1.0",
   "private": true,
-  "description": "Pipe-Up pipeline calculators for field and office hydrostatic test planning, wall thickness sizing, pipe volume and displacement, and natural gas flow estimates in Canada and the United States.",
+  "description": "Pipe-Up pipeline calculators for field and office hydrostatic test planning, wall thickness sizing, pipe volume and displacement, natural gas flow, and ASME B31G remaining-strength estimates in Canada and the United States.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test lib/hydrostatic.test.ts lib/wall-thickness.test.ts lib/pipe-volume.test.ts lib/gas-flow.test.ts",
-    "verify": "node --experimental-strip-types scripts/verify-hydro.ts && node --experimental-strip-types scripts/verify-wall.ts && node --experimental-strip-types scripts/verify-volume.ts && node --experimental-strip-types scripts/verify-gas-flow.ts"
+    "test": "node --experimental-strip-types --test lib/hydrostatic.test.ts lib/wall-thickness.test.ts lib/pipe-volume.test.ts lib/gas-flow.test.ts lib/b31g.test.ts",
+    "verify": "node --experimental-strip-types scripts/verify-hydro.ts && node --experimental-strip-types scripts/verify-wall.ts && node --experimental-strip-types scripts/verify-volume.ts && node --experimental-strip-types scripts/verify-gas-flow.ts && node --experimental-strip-types scripts/verify-b31g.ts"
   },
   "engines": {
     "node": ">=20.19.0"

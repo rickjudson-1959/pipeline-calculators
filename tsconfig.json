@@ -36,6 +36,7 @@
       "lib/wall-thickness.test.ts",
       "lib/pipe-volume.test.ts",
       "lib/gas-flow.test.ts",
+      "lib/b31g.test.ts",
       "scripts"
     ]
 }

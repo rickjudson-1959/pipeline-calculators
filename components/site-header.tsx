@@ -7,6 +7,7 @@ const NAV = [
   { href: "/calculators/wall-thickness", label: "Wall Thickness" },
   { href: "/calculators/pipe-volume", label: "Pipe Volume" },
   { href: "/calculators/gas-flow", label: "Gas Flow" },
+  { href: "/calculators/b31g", label: "B31G" },
 ];
 
 export function SiteHeader() {
