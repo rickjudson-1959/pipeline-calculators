@@ -9,8 +9,8 @@ export function SiteFooter() {
         </p>
         <p className="footer-meta">
           Encoded checks only: hydrostatic high and low elevation gates, and
-          design-factor wall thickness / MAOP compliance. No ads and no email
-          gate.
+          wall thickness / MAOP, E, T, D/t, and multi-standard comparison. No
+          ads and no email gate.
         </p>
       </div>
     </footer>

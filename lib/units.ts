@@ -135,7 +135,14 @@ export function convertHydroValues<T extends Record<HydroUnitField, number>>(
   };
 }
 
-export type WallUnitField = "od" | "smys" | "pDesign" | "corr" | "tnom";
+export type WallUnitField =
+  | "od"
+  | "smys"
+  | "pDesign"
+  | "corr"
+  | "tnom"
+  | "jointE"
+  | "tempT";
 
 export type WallUnitLabels = {
   diameter: string;
@@ -181,6 +188,9 @@ export function convertWallField(
       return convertSmys(value, from, to);
     case "pDesign":
       return convertPressure(value, from, to);
+    case "jointE":
+    case "tempT":
+      return value;
     default: {
       const exhaustive: never = key;
       return exhaustive;
@@ -204,6 +214,8 @@ export function convertWallValues<T extends Record<WallUnitField, number>>(
     pDesign: convertWallField("pDesign", values.pDesign, from, to),
     corr: convertWallField("corr", values.corr, from, to),
     tnom: convertWallField("tnom", values.tnom, from, to),
+    jointE: convertWallField("jointE", values.jointE, from, to),
+    tempT: convertWallField("tempT", values.tempT, from, to),
   };
 }
 

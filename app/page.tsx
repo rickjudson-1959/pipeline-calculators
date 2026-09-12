@@ -51,11 +51,11 @@ export default function HomePage() {
           This site applies only the numeric checks encoded in the live tools.
           The hydrostatic calculator uses high-point pressure at or above the
           selected-code factor times MOP / MAOP, and low-point pressure at or
-          below 100% SMYS. The wall thickness calculator uses Barlow
-          design-factor thickness and MAOP for the selected location class.
-          Neither tool covers hold time, test medium, temperature derating,
-          joint factor E, fittings, or other code clauses. They are not a full
-          code review and they are not stamped design.
+          below 100% SMYS. The wall thickness calculator uses the
+          pressure-design equation with F, E, and T, D/t slenderness of 140 or
+          less, and a multi-standard comparison grid. Neither tool covers hold
+          time, test medium, fittings, or other code clauses. They are not a
+          full code review and they are not stamped design.
         </p>
       </section>
 
