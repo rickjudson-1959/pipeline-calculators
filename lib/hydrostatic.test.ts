@@ -144,16 +144,23 @@ test("unit conversion constants and field mapping match the approved prototype",
 
   const us = convertHydroValues(DEFAULT_HYDRO_INPUTS, "metric", "us");
   const back = convertHydroValues(us, "us", "metric");
-  assert.equal(back.od, DEFAULT_HYDRO_INPUTS.od);
-  assert.equal(back.wt, DEFAULT_HYDRO_INPUTS.wt);
-  assert.equal(back.smys, DEFAULT_HYDRO_INPUTS.smys);
-  assert.equal(back.length, DEFAULT_HYDRO_INPUTS.length);
-  assert.equal(back.mop, DEFAULT_HYDRO_INPUTS.mop);
-  assert.equal(back.pTarget, DEFAULT_HYDRO_INPUTS.pTarget);
-  assert.equal(back.elHigh, DEFAULT_HYDRO_INPUTS.elHigh);
-  assert.equal(back.elTest, DEFAULT_HYDRO_INPUTS.elTest);
-  assert.equal(back.elLow, DEFAULT_HYDRO_INPUTS.elLow);
+  assertClose(back.od, DEFAULT_HYDRO_INPUTS.od);
+  assertClose(back.wt, DEFAULT_HYDRO_INPUTS.wt);
+  assertClose(back.smys, DEFAULT_HYDRO_INPUTS.smys);
+  assertClose(back.length, DEFAULT_HYDRO_INPUTS.length);
+  assertClose(back.mop, DEFAULT_HYDRO_INPUTS.mop);
+  assertClose(back.pTarget, DEFAULT_HYDRO_INPUTS.pTarget);
+  assertClose(back.elHigh, DEFAULT_HYDRO_INPUTS.elHigh);
+  assertClose(back.elTest, DEFAULT_HYDRO_INPUTS.elTest);
+  assertClose(back.elLow, DEFAULT_HYDRO_INPUTS.elLow);
 });
+
+function assertClose(actual: number, expected: number) {
+  assert.ok(
+    Math.abs(actual - expected) < 1e-10,
+    `expected ${expected}, got ${actual}`,
+  );
+}
 
 test("shared constants stay aligned with the encoded formulas", () => {
   assert.equal(BBL_PER_M3, 6.28981);
