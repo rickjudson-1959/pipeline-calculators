@@ -125,7 +125,7 @@ test("ASME B31.8 Class 4 uses F=0.40 and matches the undersized sanity case", ()
 
   assert.equal(getDesignFactor("asme_b318_c4"), 0.4);
   assert.equal(actual.designFactor, 0.4);
-  assert.equal(actual.allowableStress, 193.2);
+  assert.ok(Math.abs(actual.allowableStress - 193.2) < 1e-10);
   assert.equal(actual.tMin, expected.tMin);
   assert.equal(actual.maop, expected.maop);
   assert.equal(actual.isCompliant, false);
