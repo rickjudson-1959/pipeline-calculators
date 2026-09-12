@@ -6,8 +6,8 @@ export default function NotFound() {
       <p className="hero-kicker">Page not found</p>
       <h1>That route is not in this toolkit yet.</h1>
       <p className="lede">
-        The live tool is the hydrostatic test calculator. Pressure drop and pipe
-        volume are listed as coming soon.
+        Live tools are the hydrostatic test calculator and the wall thickness
+        calculator. Pipe volume is listed as coming soon.
       </p>
       <div className="hero-actions">
         <Link className="btn btn-primary" href="/">
@@ -15,6 +15,9 @@ export default function NotFound() {
         </Link>
         <Link className="btn btn-ghost" href="/calculators/hydrostatic-test">
           Open hydrostatic test
+        </Link>
+        <Link className="btn btn-ghost" href="/calculators/wall-thickness">
+          Open wall thickness
         </Link>
       </div>
     </section>

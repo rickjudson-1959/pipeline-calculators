@@ -36,7 +36,7 @@ export default function OpenGraphImage() {
           Pipeline Calculators
         </div>
         <div style={{ fontSize: 32, marginTop: 18, color: "#d6e3f0" }}>
-          Cross-border hydrostatic test planning for the field and the office
+          Hydrostatic test and wall thickness sizing for the field and the office
         </div>
       </div>
     ),

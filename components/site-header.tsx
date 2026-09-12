@@ -4,6 +4,7 @@ import { SiteLogo } from "@/components/site-logo";
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/calculators/hydrostatic-test", label: "Hydrostatic Test" },
+  { href: "/calculators/wall-thickness", label: "Wall Thickness" },
 ];
 
 export function SiteHeader() {
