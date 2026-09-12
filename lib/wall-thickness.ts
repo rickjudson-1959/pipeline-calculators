@@ -6,6 +6,8 @@ export type WallThicknessInputs = {
   pDesign: number;
   corr: number;
   tnom: number;
+  jointE: number;
+  tempT: number;
 };
 
 export type WallThicknessResults = {
@@ -15,6 +17,10 @@ export type WallThicknessResults = {
   tMin: number;
   maop: number;
   isCompliant: boolean;
+  dtNom: number;
+  dtMin: number;
+  dtNomOk: boolean;
+  dtMinOk: boolean;
 };
 
 export type DesignCode =
@@ -31,16 +37,24 @@ export type WallCalcOptions = {
   code?: DesignCode;
 };
 
+export type WallComparisonRow = WallThicknessResults & {
+  code: DesignCode;
+  label: string;
+};
+
 export const DEFAULT_WALL_INPUTS: WallThicknessInputs = {
   od: 508,
   smys: 483,
   pDesign: 9930,
   corr: 1.6,
   tnom: 9.5,
+  jointE: 1,
+  tempT: 1,
 };
 
 export const DEFAULT_WALL_UNIT_SYSTEM: UnitSystem = "metric";
 export const DEFAULT_DESIGN_CODE: DesignCode = "asme_b314";
+export const SLENDERNESS_LIMIT = 140;
 
 export const DESIGN_FACTORS: Record<DesignCode, number> = {
   asme_b314: 0.72,
@@ -102,26 +116,42 @@ export function formatDesignFactor(factor: number): string {
   return factor.toFixed(2);
 }
 
+export function formatCompliance(isCompliant: boolean): "COMPLIANT" | "UNDERSIZED" {
+  return isCompliant ? "COMPLIANT" : "UNDERSIZED";
+}
+
+export function isWithinSlendernessLimit(ratio: number): boolean {
+  return Number.isFinite(ratio) && ratio <= SLENDERNESS_LIMIT;
+}
+
+function hoopStressTerm(
+  allowableStress: number,
+  unitSystem: UnitSystem,
+  jointE: number,
+  tempT: number,
+): number {
+  const stress =
+    unitSystem === "metric" ? allowableStress * 1000 : allowableStress;
+  return 2 * stress * jointE * tempT;
+}
+
 export function calculateWallThickness(
   inputs: WallThicknessInputs,
   options: WallCalcOptions = {},
 ): WallThicknessResults {
   const unitSystem = options.unitSystem ?? DEFAULT_WALL_UNIT_SYSTEM;
   const code = options.code ?? DEFAULT_DESIGN_CODE;
-  const { od, smys, pDesign, corr, tnom } = inputs;
+  const { od, smys, pDesign, corr, tnom, jointE, tempT } = inputs;
   const designFactor = getDesignFactor(code);
   const allowableStress = designFactor * smys;
+  const denom = hoopStressTerm(allowableStress, unitSystem, jointE, tempT);
 
-  const pressureThickness =
-    unitSystem === "metric"
-      ? (pDesign * od) / (2 * (allowableStress * 1000))
-      : (pDesign * od) / (2 * allowableStress);
+  const pressureThickness = (pDesign * od) / denom;
   const tMin = pressureThickness + corr;
   const remaining = tnom - corr;
-  const maop =
-    unitSystem === "metric"
-      ? (2 * remaining * (allowableStress * 1000)) / od
-      : (2 * remaining * allowableStress) / od;
+  const maop = (remaining * denom) / od;
+  const dtNom = od / tnom;
+  const dtMin = od / tMin;
 
   return {
     designFactor,
@@ -129,8 +159,26 @@ export function calculateWallThickness(
     pressureThickness,
     tMin,
     maop,
-    isCompliant: maop >= pDesign,
+    isCompliant: tnom >= tMin && maop >= pDesign,
+    dtNom,
+    dtMin,
+    dtNomOk: isWithinSlendernessLimit(dtNom),
+    dtMinOk: isWithinSlendernessLimit(dtMin),
   };
+}
+
+export function compareWallStandards(
+  inputs: WallThicknessInputs,
+  options: Omit<WallCalcOptions, "code"> = {},
+): WallComparisonRow[] {
+  return DESIGN_CODES.map((standard) => ({
+    code: standard.id,
+    label: standard.label,
+    ...calculateWallThickness(inputs, {
+      unitSystem: options.unitSystem,
+      code: standard.id,
+    }),
+  }));
 }
 
 export function validateWallInputs(inputs: WallThicknessInputs): string[] {
@@ -150,6 +198,12 @@ export function validateWallInputs(inputs: WallThicknessInputs): string[] {
   }
   if (!Number.isFinite(inputs.tnom) || !(inputs.tnom > 0)) {
     errors.push("Selected nominal wall thickness must be a number greater than 0.");
+  }
+  if (!Number.isFinite(inputs.jointE) || !(inputs.jointE > 0)) {
+    errors.push("Longitudinal joint efficiency E must be a number greater than 0.");
+  }
+  if (!Number.isFinite(inputs.tempT) || !(inputs.tempT > 0)) {
+    errors.push("Temperature derating factor T must be a number greater than 0.");
   }
   if (
     Number.isFinite(inputs.tnom) &&

@@ -1,6 +1,6 @@
 # Pipeline Calculators
 
-Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, and a wall thickness calculator for design-factor minimum wall and MAOP under CSA Z662 and ASME B31.4 / B31.8.
+Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, and a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8.
 
 This is an engineering aid, not stamped design.
 
@@ -34,11 +34,11 @@ npm test
 npm run verify
 ```
 
-`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4) and wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4).
+`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4) and wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid).
 
 Hydrostatic metric defaults (508 mm OD, 6.6 mm WT, 483 MPa SMYS, 5000 m, 9930 kPa MOP, 12413 kPa target, elevations 350 / 310 / 300 m): the CSA / 1.25 high-point gate does not meet and the low-point gate meets 100% SMYS. That is expected from the formulas, not a page error. Switching the same inputs to ASME B31.8 Class 1 (1.10) meets the high-point gate.
 
-Wall-thickness metric defaults (508 mm OD, 483 MPa SMYS, 9930 kPa design pressure, 1.6 mm corrosion, 9.5 mm selected WT, ASME B31.4 F=0.72): t_min is 8.85 mm and MAOP is 10,816.2 kPa, so the thickness gate is COMPLIANT. Switching the same inputs to ASME B31.8 Class 4 (F=0.40) makes the selected wall UNDERSIZED.
+Wall-thickness metric defaults (508 mm OD, 483 MPa SMYS, 9930 kPa design pressure, 1.6 mm corrosion, 9.5 mm selected WT, E=1.00, T=1.00, ASME B31.4 F=0.72): S is 347.76 MPa, t_p is 7.25 mm, t_min is 8.85 mm, and MAOP is 10,816 kPa, so the thickness gate is COMPLIANT. Switching the same inputs to ASME B31.8 Class 4 (F=0.40) gives t_min of 14.66 mm and MAOP of 6,009 kPa, so the selected wall is UNDERSIZED.
 
 ## Production build
 
@@ -70,10 +70,14 @@ Metric head is 9.81 kPa per metre. US head is 0.433 PSI per foot. Metric bleach 
 
 The wall thickness calculator applies only these checks:
 
-- Minimum required wall `t_min` = Barlow pressure design thickness + corrosion allowance
-- MAOP of the selected nominal wall after corrosion, using the same design factor
-- COMPLIANT when MAOP is at or above design pressure, otherwise UNDERSIZED
+- Allowable hoop stress `S = F x SMYS`
+- Pressure design thickness `t_p = (P x D) / (2 x S x E x T)`
+- Minimum required wall `t_min = t_p + corrosion allowance`
+- `MAOP = 2 x (t_nom - A) x S x E x T / D`
+- COMPLIANT when `t_nom` is at or above `t_min` and MAOP is at or above design pressure, otherwise UNDERSIZED
+- Slenderness `D/t_nom` and `D/t_min`, each flagged if greater than 140
+- A comparison grid of the same inputs across every encoded location class
 
 Design factors F: ASME B31.4 liquid and ASME B31.8 Class 1 Div 2 use 0.72. ASME B31.8 Class 1 Div 1 and CSA Z662 Class 1 use 0.80. ASME B31.8 Class 2 uses 0.60, Class 3 uses 0.50, and Class 4 uses 0.40.
 
-Metric SMYS is entered in MPa and converted to kPa. US SMYS is already in PSI. Joint factor E, temperature derating T, and a D/t grid are not applied. Do not treat either page as a full CSA Z662, ASME, or 49 CFR review.
+Default E is 1.00 (Seamless / ERW). Default T is 1.00 at or below 121 °C / 250 °F. Metric SMYS is entered in MPa and converted to kPa. US SMYS is already in PSI. E and T do not convert. The grid is encoded design-factor checks only. Do not treat either page as a full CSA Z662, ASME, or 49 CFR review.

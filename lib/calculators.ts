@@ -23,7 +23,7 @@ export const CALCULATORS: CalculatorListing[] = [
     href: "/calculators/wall-thickness",
     status: "live",
     summary:
-      "Design-factor minimum wall and MAOP check for ASME B31.4, ASME B31.8 location class, and CSA Z662 Class 1.",
+      "Pressure-design wall, MAOP, E, T, D/t slenderness, and a multi-standard comparison grid for ASME B31.4, ASME B31.8 location class, and CSA Z662 Class 1.",
   },
   {
     slug: "pipe-volume",

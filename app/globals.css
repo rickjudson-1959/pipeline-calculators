@@ -574,6 +574,89 @@ a {
   margin-top: 0.4rem;
 }
 
+.compare-intro {
+  margin: -0.35rem 0 0.9rem;
+}
+
+.compare-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -0.15rem;
+  padding-bottom: 0.25rem;
+}
+
+.compare-table {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.compare-table caption {
+  caption-side: bottom;
+  padding-top: 0.7rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 0.65rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.compare-table thead th {
+  background: #eef3f8;
+  color: var(--navy-deep);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.compare-table tbody th {
+  font-weight: 700;
+  min-width: 11rem;
+}
+
+.compare-table tr.is-primary {
+  background: #eaf2fa;
+}
+
+.compare-table tr.is-primary th,
+.compare-table tr.is-primary td {
+  box-shadow: inset 3px 0 0 var(--navy);
+}
+
+.compare-primary-tag {
+  display: inline-block;
+  margin-left: 0.45rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.compare-flag {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+.compare-flag.is-pass {
+  color: var(--pass);
+}
+
+.compare-flag.is-fail {
+  color: var(--fail);
+}
+
 @media (max-width: 700px) {
   .header-inner {
     flex-direction: column;
