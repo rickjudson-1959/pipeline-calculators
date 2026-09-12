@@ -1,6 +1,6 @@
 # Pipeline Calculators
 
-Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, and a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8.
+Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, and a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage.
 
 This is an engineering aid, not stamped design.
 
@@ -24,21 +24,24 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - Hydrostatic calculator: `/calculators/hydrostatic-test`
 - Wall thickness calculator: `/calculators/wall-thickness`
+- Pipe volume calculator: `/calculators/pipe-volume`
 
 ## Test and verify
 
-Default metric math, a US Customary path, unit conversion, and extra code factors are checked against the encoded formulas:
+Default metric math, a US Customary path, unit conversion, and extra code factors or volume formulas are checked against the encoded formulas:
 
 ```bash
 npm test
 npm run verify
 ```
 
-`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4) and wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid).
+`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4), wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid), and pipe-volume defaults (metric water-filled 508 mm example and the converted US path).
 
 Hydrostatic metric defaults (508 mm OD, 6.6 mm WT, 483 MPa SMYS, 5000 m, 9930 kPa MOP, 12413 kPa target, elevations 350 / 310 / 300 m): the CSA / 1.25 high-point gate does not meet and the low-point gate meets 100% SMYS. That is expected from the formulas, not a page error. Switching the same inputs to ASME B31.8 Class 1 (1.10) meets the high-point gate.
 
 Wall-thickness metric defaults (508 mm OD, 483 MPa SMYS, 9930 kPa design pressure, 1.6 mm corrosion, 9.5 mm selected WT, E=1.00, T=1.00, ASME B31.4 F=0.72): S is 347.76 MPa, t_p is 7.25 mm, t_min is 8.85 mm, and MAOP is 10,816 kPa, so the thickness gate is COMPLIANT. Switching the same inputs to ASME B31.8 Class 4 (F=0.40) gives t_min of 14.66 mm and MAOP of 6,009 kPa, so the selected wall is UNDERSIZED.
+
+Pipe-volume metric defaults (508 mm OD, 9.5 mm WT, 5000 m, 1000 kg/m3 water, 250 m3/hr, 500 ppm): ID is 489.0 mm, line fill is about 939.0 m3, volume per distance is about 187.8 m3/km, fill mass is about 939.0 t, fill time is about 3.76 h, and chemical dosage is about 469.5 L.
 
 ## Production build
 
@@ -80,4 +83,18 @@ The wall thickness calculator applies only these checks:
 
 Design factors F: ASME B31.4 liquid and ASME B31.8 Class 1 Div 2 use 0.72. ASME B31.8 Class 1 Div 1 and CSA Z662 Class 1 use 0.80. ASME B31.8 Class 2 uses 0.60, Class 3 uses 0.50, and Class 4 uses 0.40.
 
-Default E is 1.00 (Seamless / ERW). Default T is 1.00 at or below 121 °C / 250 °F. Metric SMYS is entered in MPa and converted to kPa. US SMYS is already in PSI. E and T do not convert. The grid is encoded design-factor checks only. Do not treat either page as a full CSA Z662, ASME, or 49 CFR review.
+Default E is 1.00 (Seamless / ERW). Default T is 1.00 at or below 121 °C / 250 °F. Metric SMYS is entered in MPa and converted to kPa. US SMYS is already in PSI. E and T do not convert. The grid is encoded design-factor checks only. Do not treat the hydrostatic or wall pages as a full CSA Z662, ASME, or 49 CFR review.
+
+## Encoded pipe-volume checks
+
+The volume calculator applies only these estimates:
+
+- Inside diameter `ID = OD - 2 x WT`
+- Metric fill volume `area = pi x (ID/1000)^2 / 4`, `vol = area x length`
+- US fill volume `area = pi x (ID/12)^2 / 4`, cubic feet to barrels at 5.61458
+- Volume per distance: m3/km or bbls/mi
+- Fill mass: metric tonnes from `vol x density / 1000`, US pounds from cubic feet times density
+- Fill / displacement time: volume divided by pumping rate, or 0 if rate is 0
+- Chemical dosage: metric litres from `vol x (ppm / 1000)`, US gallons at 0.264172 gal/L
+
+Unit toggle conversions: OD and WT by 25.4, length by 3.28084, density by 0.062428, pumping rate by 6.28981. Dosing stays in ppm. Fluid presets for water (SG 1.00), methanol (SG 0.79), and glycol (SG 1.11) only fill density. Volume and displacement results are estimates only.

@@ -5,6 +5,7 @@ const NAV = [
   { href: "/", label: "Home" },
   { href: "/calculators/hydrostatic-test", label: "Hydrostatic Test" },
   { href: "/calculators/wall-thickness", label: "Wall Thickness" },
+  { href: "/calculators/pipe-volume", label: "Pipe Volume" },
 ];
 
 export function SiteHeader() {

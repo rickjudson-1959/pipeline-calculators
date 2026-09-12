@@ -34,6 +34,7 @@
       "node_modules",
       "lib/hydrostatic.test.ts",
       "lib/wall-thickness.test.ts",
+      "lib/pipe-volume.test.ts",
       "scripts"
     ]
 }
