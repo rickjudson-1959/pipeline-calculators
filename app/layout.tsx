@@ -34,13 +34,17 @@ export const metadata: Metadata = {
     template: "%s | Pipe-Up Pipeline Calculators",
   },
   description:
-    "Field and office pipeline calculators for Canadian hydrostatic test planning, fill volume, and elevation pressure checks in a CSA Z662 context.",
+    "Field and office pipeline calculators for hydrostatic test planning in Canada and the United States, including fill volume and elevation pressure checks under CSA Z662 and ASME B31.4 / B31.8 (49 CFR).",
   applicationName: "Pipe-Up Pipeline Calculators",
   authors: [{ name: "Rick Judson" }],
   keywords: [
     "pipeline calculator",
     "hydrostatic test",
     "CSA Z662",
+    "ASME B31.4",
+    "ASME B31.8",
+    "49 CFR 192",
+    "49 CFR 195",
     "fill volume",
     "Pipe-Up",
   ],

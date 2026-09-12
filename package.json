@@ -2,7 +2,7 @@
   "name": "pipeline-calculators",
   "version": "0.1.0",
   "private": true,
-  "description": "Pipe-Up pipeline calculators for field and office hydrostatic test planning.",
+  "description": "Pipe-Up pipeline calculators for field and office hydrostatic test planning in Canada and the United States.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
