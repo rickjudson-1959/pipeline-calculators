@@ -20,6 +20,7 @@ import {
 import {
   convertHydroField,
   convertHydroValues,
+  formatInputNumber,
   FT_PER_M,
   MM_PER_IN,
   PSI_PER_KPA,
@@ -141,6 +142,9 @@ test("unit conversion constants and field mapping match the approved prototype",
   assert.equal(convertHydroField("smys", 483, "metric", "us"), 483 * PSI_PER_MPA);
   assert.equal(convertHydroField("mop", 9930, "metric", "us"), 9930 * PSI_PER_KPA);
   assert.equal(convertHydroField("pTarget", 12413, "metric", "us"), 12413 * PSI_PER_KPA);
+
+  assert.equal(formatInputNumber(508 / 25.4), "20");
+  assert.equal(formatInputNumber((6.6 / 25.4) * 25.4), "6.6");
 
   const us = convertHydroValues(DEFAULT_HYDRO_INPUTS, "metric", "us");
   const back = convertHydroValues(us, "us", "metric");

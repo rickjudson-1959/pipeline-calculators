@@ -139,5 +139,6 @@ export function formatInputNumber(value: number): string {
   if (!Number.isFinite(value)) {
     return "";
   }
-  return value.toFixed(8).replace(/\.?0+$/, "");
+  const rounded = Math.round(value * 1e8) / 1e8;
+  return String(rounded);
 }
