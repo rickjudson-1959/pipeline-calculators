@@ -1,6 +1,6 @@
 # Pipeline Calculators
 
-Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, and a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage.
+Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, and a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates.
 
 This is an engineering aid, not stamped design.
 
@@ -25,23 +25,26 @@ Open [http://localhost:3000](http://localhost:3000).
 - Hydrostatic calculator: `/calculators/hydrostatic-test`
 - Wall thickness calculator: `/calculators/wall-thickness`
 - Pipe volume calculator: `/calculators/pipe-volume`
+- Gas flow calculator: `/calculators/gas-flow`
 
 ## Test and verify
 
-Default metric math, a US Customary path, unit conversion, and extra code factors or volume formulas are checked against the encoded formulas:
+Default metric math, a US Customary path, unit conversion, and extra code factors, volume formulas, or gas-flow equations are checked against the encoded formulas:
 
 ```bash
 npm test
 npm run verify
 ```
 
-`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4), wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid), and pipe-volume defaults (metric water-filled 508 mm example and the converted US path).
+`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4), wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid), pipe-volume defaults (metric water-filled 508 mm example and the converted US path), and gas-flow defaults (metric 508 mm example and the converted US path).
 
 Hydrostatic metric defaults (508 mm OD, 6.6 mm WT, 483 MPa SMYS, 5000 m, 9930 kPa MOP, 12413 kPa target, elevations 350 / 310 / 300 m): the CSA / 1.25 high-point gate does not meet and the low-point gate meets 100% SMYS. That is expected from the formulas, not a page error. Switching the same inputs to ASME B31.8 Class 1 (1.10) meets the high-point gate.
 
 Wall-thickness metric defaults (508 mm OD, 483 MPa SMYS, 9930 kPa design pressure, 1.6 mm corrosion, 9.5 mm selected WT, E=1.00, T=1.00, ASME B31.4 F=0.72): S is 347.76 MPa, t_p is 7.25 mm, t_min is 8.85 mm, and MAOP is 10,816 kPa, so the thickness gate is COMPLIANT. Switching the same inputs to ASME B31.8 Class 4 (F=0.40) gives t_min of 14.66 mm and MAOP of 6,009 kPa, so the selected wall is UNDERSIZED.
 
 Pipe-volume metric defaults (508 mm OD, 9.5 mm WT, 5000 m, 1000 kg/m3 water, 250 m3/hr, 500 ppm): ID is 489.0 mm, line fill is about 939.0 m3, volume per distance is about 187.8 m3/km, fill mass is about 939.0 t, fill time is about 3.76 h, and chemical dosage is about 469.5 L.
+
+Gas-flow metric defaults (P1 7000 kPa abs, P2 5000 kPa abs, γg 0.60, 508 mm OD, 9.5 mm WT, 50 km, E 0.92): ID is 489.0 mm, pressure drop is 2,000 kPa, Weymouth is about 8,157 10³ m3/d, Panhandle A is about 10,638 10³ m3/d, and Panhandle B is about 10,293 10³ m3/d. Phase 1 hardcodes Tf = 288.15 K, Z = 0.88, Tb = 288.15 K, and Pb = 101.325 kPa. The same inputs converted to US Customary are about 288 / 375 / 362 MMSCFD.
 
 ## Production build
 
@@ -98,3 +101,15 @@ The volume calculator applies only these estimates:
 - Chemical dosage: metric litres from `vol x (ppm / 1000)`, US gallons at 0.264172 gal/L
 
 Unit toggle conversions: OD and WT by 25.4, length by 3.28084, density by 0.062428, pumping rate by 6.28981. Dosing stays in ppm. Fluid presets for water (SG 1.00), methanol (SG 0.79), and glycol (SG 1.11) only fill density. Volume and displacement results are estimates only.
+
+## Encoded gas-flow checks
+
+The gas flow calculator applies only these estimates:
+
+- Inside diameter `ID = OD - 2 x WT`
+- Pressure drop `ΔP = P1 - P2`
+- Metric Weymouth, Panhandle A, and Panhandle B using Tb = 288.15 K, Pb = 101.325 kPa, Tf = 288.15 K, and Z = 0.88, then scaled from sm3/d to 10³ m3/d
+- US Weymouth, Panhandle A, and Panhandle B using Tb = 520 R, Pb = 14.73 psia, Tf = 520 R, and Z = 0.88, reported in MMSCFD
+- Results pause when length, gravity, or ID is not greater than 0, or when `P1² - P2²` is not greater than 0
+
+Unit toggle conversions: pressure by 0.145038, OD and WT by 25.4, length by 1.60934 (km to miles). Gas gravity and line efficiency do not convert. Tf, Z, Pb, and Tb are hardcoded in Phase 1. Gas flow results are estimates only. Do not treat them as stamped design.

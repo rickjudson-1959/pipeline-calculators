@@ -9,8 +9,9 @@ export function SiteFooter() {
         </p>
         <p className="footer-meta">
           Encoded checks only: hydrostatic high and low elevation gates, wall
-          thickness / MAOP, E, T, D/t, and multi-standard comparison, plus
-          pipe volume and displacement estimates. No ads and no email gate.
+          thickness / MAOP, E, T, D/t, and multi-standard comparison, pipe
+          volume and displacement estimates, and Weymouth / Panhandle gas flow
+          estimates. No ads and no email gate.
         </p>
       </div>
     </footer>

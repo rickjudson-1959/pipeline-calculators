@@ -33,4 +33,12 @@ export const CALCULATORS: CalculatorListing[] = [
     summary:
       "Inside diameter, line fill volume, volume per distance, fluid fill mass, fill / displacement time, and chemical inhibitor dosage for metric and US Customary pipe sections.",
   },
+  {
+    slug: "gas-flow",
+    title: "Natural Gas Flow & Pressure Drop",
+    href: "/calculators/gas-flow",
+    status: "live",
+    summary:
+      "Weymouth, Panhandle A, and Panhandle B flow from inlet and outlet pressure, gas gravity, pipe size, length, and line efficiency in metric and US Customary units.",
+  },
 ];

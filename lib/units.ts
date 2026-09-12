@@ -17,6 +17,7 @@ export const PSI_PER_MPA = 145.038;
 export const PSI_PER_KPA = 0.145038;
 export const LB_PER_CUFT_PER_KG_M3 = 0.062428;
 export const BBL_PER_M3_RATE = 6.28981;
+export const KM_PER_MILE = 1.60934;
 
 export type HydroUnitLabels = {
   diameter: string;
@@ -326,6 +327,101 @@ export function convertVolumeValues<T extends Record<VolumeUnitField, number>>(
     density: convertVolumeField("density", values.density, from, to),
     rate: convertVolumeField("rate", values.rate, from, to),
     dosing: convertVolumeField("dosing", values.dosing, from, to),
+  };
+}
+
+export type GasUnitField =
+  | "p1"
+  | "p2"
+  | "gamma"
+  | "od"
+  | "wt"
+  | "length"
+  | "efficiency";
+
+export type GasUnitLabels = {
+  pressure: string;
+  diameter: string;
+  length: string;
+  flow: string;
+};
+
+export function gasUnitLabels(unitSystem: UnitSystem): GasUnitLabels {
+  if (unitSystem === "metric") {
+    return {
+      pressure: "kPa abs",
+      diameter: "mm",
+      length: "km",
+      flow: "10³ m3/d",
+    };
+  }
+
+  return {
+    pressure: "psia",
+    diameter: "in",
+    length: "mi",
+    flow: "MMSCFD",
+  };
+}
+
+export function convertPipelineLengthKmMi(
+  value: number,
+  from: UnitSystem,
+  to: UnitSystem,
+): number {
+  if (from === to) {
+    return value;
+  }
+  return from === "metric" ? value / KM_PER_MILE : value * KM_PER_MILE;
+}
+
+export function convertGasField(
+  key: GasUnitField,
+  value: number,
+  from: UnitSystem,
+  to: UnitSystem,
+): number {
+  if (from === to) {
+    return value;
+  }
+
+  switch (key) {
+    case "p1":
+    case "p2":
+      return convertPressure(value, from, to);
+    case "od":
+    case "wt":
+      return convertDiameter(value, from, to);
+    case "length":
+      return convertPipelineLengthKmMi(value, from, to);
+    case "gamma":
+    case "efficiency":
+      return value;
+    default: {
+      const exhaustive: never = key;
+      return exhaustive;
+    }
+  }
+}
+
+export function convertGasValues<T extends Record<GasUnitField, number>>(
+  values: T,
+  from: UnitSystem,
+  to: UnitSystem,
+): T {
+  if (from === to) {
+    return { ...values };
+  }
+
+  return {
+    ...values,
+    p1: convertGasField("p1", values.p1, from, to),
+    p2: convertGasField("p2", values.p2, from, to),
+    gamma: convertGasField("gamma", values.gamma, from, to),
+    od: convertGasField("od", values.od, from, to),
+    wt: convertGasField("wt", values.wt, from, to),
+    length: convertGasField("length", values.length, from, to),
+    efficiency: convertGasField("efficiency", values.efficiency, from, to),
   };
 }
 

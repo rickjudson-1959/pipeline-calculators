@@ -35,6 +35,7 @@
       "lib/hydrostatic.test.ts",
       "lib/wall-thickness.test.ts",
       "lib/pipe-volume.test.ts",
+      "lib/gas-flow.test.ts",
       "scripts"
     ]
 }
