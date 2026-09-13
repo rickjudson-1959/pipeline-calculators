@@ -41,4 +41,12 @@ export const CALCULATORS: CalculatorListing[] = [
     summary:
       "Weymouth, Panhandle A, and Panhandle B flow from inlet and outlet pressure, gas gravity, pipe size, length, and line efficiency in metric and US Customary units.",
   },
+  {
+    slug: "b31g",
+    title: "ASME B31G Corroded Pipe",
+    href: "/calculators/b31g",
+    status: "live",
+    summary:
+      "Original B31G and Modified B31G remaining strength, depth ratio, safe pressure, modified RSF, and an operating safety gate for a blunt metal-loss defect.",
+  },
 ];

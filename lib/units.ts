@@ -425,6 +425,87 @@ export function convertGasValues<T extends Record<GasUnitField, number>>(
   };
 }
 
+export type B31gUnitField =
+  | "od"
+  | "wt"
+  | "smys"
+  | "f"
+  | "depth"
+  | "length"
+  | "poper";
+
+export type B31gUnitLabels = {
+  diameter: string;
+  smys: string;
+  pressure: string;
+};
+
+export function b31gUnitLabels(unitSystem: UnitSystem): B31gUnitLabels {
+  if (unitSystem === "metric") {
+    return {
+      diameter: "mm",
+      smys: "MPa",
+      pressure: "kPa",
+    };
+  }
+
+  return {
+    diameter: "in",
+    smys: "PSI",
+    pressure: "PSI",
+  };
+}
+
+export function convertB31gField(
+  key: B31gUnitField,
+  value: number,
+  from: UnitSystem,
+  to: UnitSystem,
+): number {
+  if (from === to) {
+    return value;
+  }
+
+  switch (key) {
+    case "od":
+    case "wt":
+    case "depth":
+    case "length":
+      return convertDiameter(value, from, to);
+    case "smys":
+      return convertSmys(value, from, to);
+    case "poper":
+      return convertPressure(value, from, to);
+    case "f":
+      return value;
+    default: {
+      const exhaustive: never = key;
+      return exhaustive;
+    }
+  }
+}
+
+export function convertB31gValues<T extends Record<B31gUnitField, number>>(
+  values: T,
+  from: UnitSystem,
+  to: UnitSystem,
+): T {
+  if (from === to) {
+    return { ...values };
+  }
+
+  return {
+    ...values,
+    od: convertB31gField("od", values.od, from, to),
+    wt: convertB31gField("wt", values.wt, from, to),
+    smys: convertB31gField("smys", values.smys, from, to),
+    f: convertB31gField("f", values.f, from, to),
+    depth: convertB31gField("depth", values.depth, from, to),
+    length: convertB31gField("length", values.length, from, to),
+    poper: convertB31gField("poper", values.poper, from, to),
+  };
+}
+
 export function formatInputNumber(value: number): string {
   if (!Number.isFinite(value)) {
     return "";
