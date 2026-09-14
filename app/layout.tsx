@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Source_Sans_3 } from "next/font/google";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
 const sourceSans = Source_Sans_3({
@@ -76,13 +74,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${sourceSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <div className="site-shell">
-          <SiteHeader />
-          <main className="site-main">
-            <div className="site-wrap">{children}</div>
-          </main>
-          <SiteFooter />
-        </div>
+        <div className="site-shell">{children}</div>
       </body>
     </html>
   );

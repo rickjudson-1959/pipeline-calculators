@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SiteLogo } from "@/components/site-logo";
 
-const NAV = [
+const SUITE_NAV = [
   { href: "/", label: "Home" },
   { href: "/calculators/hydrostatic-test", label: "Hydrostatic Test" },
   { href: "/calculators/wall-thickness", label: "Wall Thickness" },
@@ -10,7 +10,12 @@ const NAV = [
   { href: "/calculators/b31g", label: "B31G" },
 ];
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  /** When false, hide sibling-calculator hops (used on tool pages). */
+  showSuiteNav?: boolean;
+};
+
+export function SiteHeader({ showSuiteNav = true }: SiteHeaderProps) {
   return (
     <header className="site-header">
       <div className="site-wrap header-inner">
@@ -21,15 +26,17 @@ export function SiteHeader() {
             <span className="brand-name">Pipeline Calculators</span>
           </span>
         </Link>
-        <nav aria-label="Primary">
-          <ul className="nav-list">
-            {NAV.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href}>{item.label}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {showSuiteNav ? (
+          <nav aria-label="Primary">
+            <ul className="nav-list">
+              {SUITE_NAV.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
       </div>
     </header>
   );
