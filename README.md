@@ -1,8 +1,8 @@
 # Pipeline Calculators
 
-Pipe-Up field and office calculators for pipeline work in Canada and the United States. This suite is complete for now. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates, and an ASME B31G / Modified B31G calculator for corroded-pipe remaining strength.
+Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates, an ASME B31G / Modified B31G calculator for corroded-pipe remaining strength, a sideboom spanning and lift load calculator, and a field bending strain and limits calculator.
 
-This is an engineering aid, not stamped design.
+This is an engineering aid, not stamped PE advice. Engineering math lives in isolated `lib/` modules. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Stack
 
@@ -27,17 +27,19 @@ Open [http://localhost:3000](http://localhost:3000).
 - Pipe volume calculator: `/calculators/pipe-volume`
 - Gas flow calculator: `/calculators/gas-flow`
 - B31G calculator: `/calculators/b31g`
+- Sideboom spanning and lift load calculator: `/calculators/sideboom-span-lift`
+- Field bending strain and limits calculator: `/calculators/field-bending-limits`
 
 ## Test and verify
 
-Default metric math, a US Customary path, unit conversion, and extra code factors, volume formulas, gas-flow equations, or B31G remaining-strength formulas are checked against the encoded formulas:
+Default metric math, a US Customary path, unit conversion, extra code factors, volume formulas, gas-flow equations, B31G remaining-strength formulas, sideboom span and lift formulas, and field bending strain limits are checked against the encoded formulas:
 
 ```bash
 npm test
 npm run verify
 ```
 
-`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4), wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid), pipe-volume defaults (metric water-filled 508 mm example and the converted US path), gas-flow defaults (metric 508 mm example and the converted US path), and B31G defaults (metric 508 mm example and the converted US path).
+`verify` prints hydrostatic defaults (metric CSA, converted US B31.4, metric Class 4), wall-thickness defaults (metric B31.4, converted US B31.4, metric B31.8 Class 4, plus the multi-standard grid), pipe-volume defaults (metric water-filled 508 mm example and the converted US path), gas-flow defaults (metric 508 mm example and the converted US path), B31G defaults (metric 508 mm example and the converted US path), sideboom defaults (20 in OD, 0.375 in WT, 10 lb/in, 70,000 psi), and field bending defaults (20 in OD with each Appendix A coating).
 
 Hydrostatic metric defaults (508 mm OD, 6.6 mm WT, 483 MPa SMYS, 5000 m, 9930 kPa MOP, 12413 kPa target, elevations 350 / 310 / 300 m): the CSA / 1.25 high-point gate does not meet and the low-point gate meets 100% SMYS. That is expected from the formulas, not a page error. Switching the same inputs to ASME B31.8 Class 1 (1.10) meets the high-point gate.
 
@@ -48,6 +50,10 @@ Pipe-volume metric defaults (508 mm OD, 9.5 mm WT, 5000 m, 1000 kg/m3 water, 250
 Gas-flow metric defaults (P1 7000 kPa abs, P2 5000 kPa abs, γg 0.60, 508 mm OD, 9.5 mm WT, 50 km, E 0.92): ID is 489.0 mm, pressure drop is 2,000 kPa, Weymouth is about 8,157 10³ m3/d, Panhandle A is about 10,638 10³ m3/d, and Panhandle B is about 10,293 10³ m3/d. Phase 1 hardcodes Tf = 288.15 K, Z = 0.88, Tb = 288.15 K, and Pb = 101.325 kPa. The same inputs converted to US Customary are about 288 / 375 / 362 MMSCFD.
 
 B31G metric defaults (508 mm OD, 9.5 mm WT, 483 MPa SMYS, F 0.72, 2.5 mm depth, 150 mm axial length, 9930 kPa operating pressure): uncorroded MAOP is 13,007 kPa, d/t is 26.3%, P'_B31G is 13,007 kPa, P'_Mod is 13,007 kPa, Modified RSF is 100.0%, and the operating safety gate is SAFE AT OPERATING PRESSURE. Those safe pressures are capped at uncorroded MAOP. A 26% deep, 150 mm defect on this pipe does not derate below Barlow MAOP. Switching the same inputs to US Customary keeps the gate SAFE.
+
+Sideboom defaults (20 in OD, 0.375 in WT, 10 lb/in net unit weight, 70,000 psi allowable bending stress): I is about 1,113.47 in^4, L_s is about 2,791.8 in, Lift_Load is about 27,918 lbs, and spanning stress sigma_bs returns to 70,000 psi.
+
+Field bending defaults (20 in OD): mortar-lined and coated is 2% and 0.40 in, mortar-lined and flexible coated is 3% and 0.60 in, and flexible lining and coated is 5% and 1.00 in.
 
 ## Production build
 
@@ -131,3 +137,25 @@ The B31G calculator applies only these checks:
 - Operating gate: `REJECT (>80% DEPTH)` when `d/t > 0.80`. Otherwise `SAFE AT OPERATING PRESSURE` when operating pressure is at or below `P'_Mod`, or `DERATING REQUIRED`
 
 Unit toggle conversions: OD, wall, defect depth, and defect length by 25.4, SMYS by 145.038, operating pressure by 0.145038. Design factor F does not convert. Results pause when OD or WT is not greater than 0, depth or length is negative, or a Folias denominator is not greater than 0. B31G results are an engineering aid only, not a stamped integrity assessment.
+
+## Encoded sideboom span and lift checks
+
+The sideboom calculator applies only these estimates (US Customary):
+
+- Hollow-section inertia `I = (pi / 64) * (D^4 - (D - 2t)^4)`
+- Maximum safe span `L_s = sqrt((20 * S_allow * I) / (w * D))`
+- Required lift load `Lift_Load = w * L_s`
+- Spanning-stress note `sigma_bs = (w * L_s^2 * D) / (20 * I)`
+
+Citation: ASME B31 / Pipeline Infrastructure Eq 14-4. Results pause when D is not greater than 0, wall is not between 0 and D/2 exclusive, or w or S_allow is not greater than 0.
+
+## Encoded field bending checks
+
+The field bending calculator applies only these Appendix A limits (US Customary):
+
+- Mortar-lined and coated: 2%
+- Mortar-lined and flexible coated: 3%
+- Flexible lining and coated: 5%
+- Maximum deflection `max_deflection = (strain_limit_pct / 100) * D`
+
+Citation: Pipeline Infrastructure: Appendix A Acceptance Criteria. Results pause when D is not greater than 0 or the coating design is not one of those three options.

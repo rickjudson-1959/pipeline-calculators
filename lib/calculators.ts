@@ -49,4 +49,20 @@ export const CALCULATORS: CalculatorListing[] = [
     summary:
       "Original B31G and Modified B31G remaining strength, depth ratio, safe pressure, modified RSF, and an operating safety gate for a blunt metal-loss defect.",
   },
+  {
+    slug: "sideboom-span-lift",
+    title: "Sideboom Spanning and Lift Load",
+    href: "/calculators/sideboom-span-lift",
+    status: "live",
+    summary:
+      "Hollow-section moment of inertia, maximum safe span between sidebooms, and required lift capacity per machine from ASME B31 / Pipeline Infrastructure Eq 14-4.",
+  },
+  {
+    slug: "field-bending-limits",
+    title: "Field Bending Strain and Limits",
+    href: "/calculators/field-bending-limits",
+    status: "live",
+    summary:
+      "Coating-based bending strain limits and maximum deflection from Pipeline Infrastructure Appendix A acceptance criteria.",
+  },
 ];

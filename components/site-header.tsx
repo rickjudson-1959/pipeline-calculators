@@ -8,6 +8,8 @@ const SUITE_NAV = [
   { href: "/calculators/pipe-volume", label: "Pipe Volume" },
   { href: "/calculators/gas-flow", label: "Gas Flow" },
   { href: "/calculators/b31g", label: "B31G" },
+  { href: "/calculators/sideboom-span-lift", label: "Sideboom Span" },
+  { href: "/calculators/field-bending-limits", label: "Field Bending" },
 ];
 
 type SiteHeaderProps = {
