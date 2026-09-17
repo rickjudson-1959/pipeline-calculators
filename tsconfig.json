@@ -37,6 +37,8 @@
       "lib/pipe-volume.test.ts",
       "lib/gas-flow.test.ts",
       "lib/b31g.test.ts",
+      "lib/sideboom-span-lift.test.ts",
+      "lib/field-bending-limits.test.ts",
       "scripts"
     ]
 }

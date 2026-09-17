@@ -10,12 +10,13 @@ export default function HomePage() {
         <h1>Pipeline calculators for the field and the office</h1>
         <p className="lede">
           A small toolkit for pipeline work in Canada and the United States.
-          This suite is complete for now. Live tools cover hydrostatic test
-          fill volume and elevation pressure checks, design-factor wall
-          thickness and MAOP sizing under CSA Z662 and ASME B31.4 / B31.8,
-          standalone pipe volume and displacement estimates, natural gas flow
-          and pressure drop with Weymouth, Panhandle A, and Panhandle B, and
-          ASME B31G / Modified B31G remaining strength for corroded pipe.
+          Live tools cover hydrostatic test fill volume and elevation pressure
+          checks, design-factor wall thickness and MAOP sizing under CSA Z662
+          and ASME B31.4 / B31.8, standalone pipe volume and displacement
+          estimates, natural gas flow and pressure drop with Weymouth,
+          Panhandle A, and Panhandle B, ASME B31G / Modified B31G remaining
+          strength for corroded pipe, sideboom spanning and lift load, and
+          field bending strain limits.
         </p>
         <div className="hero-actions">
           <Link className="btn btn-primary" href="/calculators/hydrostatic-test">
@@ -32,6 +33,12 @@ export default function HomePage() {
           </Link>
           <Link className="btn btn-ghost" href="/calculators/b31g">
             Open B31G calculator
+          </Link>
+          <Link className="btn btn-ghost" href="/calculators/sideboom-span-lift">
+            Open sideboom span calculator
+          </Link>
+          <Link className="btn btn-ghost" href="/calculators/field-bending-limits">
+            Open field bending calculator
           </Link>
         </div>
       </section>
@@ -72,21 +79,26 @@ export default function HomePage() {
           from absolute inlet and outlet pressure. The B31G calculator
           estimates original and Modified B31G safe pressure for a measured
           metal-loss defect and gates operating pressure against Modified
-          B31G. None of the tools cover hold time, test medium, fittings, or
-          other code clauses. They are not a full code review and they are
-          not stamped design.
+          B31G. The sideboom calculator estimates hollow-section inertia,
+          maximum safe span, and lift load from Eq 14-4. The field bending
+          calculator applies Appendix A coating strain limits and a
+          diameter-scaled deflection cap. None of the tools cover hold time,
+          test medium, fittings, or other code clauses. They are not a full
+          code review and they are not stamped design.
         </p>
       </section>
 
       <aside className="disclaimer" aria-labelledby="disclaimer-heading">
         <h2 id="disclaimer-heading">Disclaimer</h2>
         <p>
-          These calculators are an engineering aid. They are not stamped design,
-          a permit, or a substitute for a professional engineer of record.
-          Volume, displacement, gas flow, and B31G remaining-strength
-          results are estimates only. Confirm inputs, units, and the CSA
-          Z662, ASME, or 49 CFR requirements that apply to your project
-          before you use a result in the field.
+          These calculators are an engineering aid. They are not stamped PE
+          advice, a permit, or a substitute for a professional engineer of
+          record. Volume, displacement, gas flow, B31G remaining-strength,
+          sideboom span, and field bending results are estimates only.
+          Results depend on correct inputs and the applicable code edition.
+          Confirm inputs, units, and the CSA Z662, ASME, or 49 CFR
+          requirements that apply to your project before you use a result
+          in the field.
         </p>
       </aside>
     </>

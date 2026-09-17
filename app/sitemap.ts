@@ -10,5 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/calculators/pipe-volume` },
     { url: `${SITE}/calculators/gas-flow` },
     { url: `${SITE}/calculators/b31g` },
+    { url: `${SITE}/calculators/sideboom-span-lift` },
+    { url: `${SITE}/calculators/field-bending-limits` },
   ];
 }

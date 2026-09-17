@@ -10,8 +10,9 @@ export default function NotFound() {
         <p className="lede">
           Live tools are the hydrostatic test calculator, the wall thickness
           calculator, the pipe volume and displacement calculator, the
-          natural gas flow calculator, and the ASME B31G corroded-pipe
-          calculator.
+          natural gas flow calculator, the ASME B31G corroded-pipe
+          calculator, the sideboom spanning and lift load calculator, and
+          the field bending strain and limits calculator.
         </p>
         <div className="hero-actions">
           <Link className="btn btn-primary" href="/">
@@ -31,6 +32,12 @@ export default function NotFound() {
           </Link>
           <Link className="btn btn-ghost" href="/calculators/b31g">
             Open B31G
+          </Link>
+          <Link className="btn btn-ghost" href="/calculators/sideboom-span-lift">
+            Open sideboom span
+          </Link>
+          <Link className="btn btn-ghost" href="/calculators/field-bending-limits">
+            Open field bending
           </Link>
         </div>
       </section>
