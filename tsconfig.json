@@ -37,6 +37,7 @@
       "lib/pipe-volume.test.ts",
       "lib/gas-flow.test.ts",
       "lib/b31g.test.ts",
+      "lib/b314-wall-maop.test.ts",
       "scripts"
     ]
 }

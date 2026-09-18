@@ -5,6 +5,7 @@ const SUITE_NAV = [
   { href: "/", label: "Home" },
   { href: "/calculators/hydrostatic-test", label: "Hydrostatic Test" },
   { href: "/calculators/wall-thickness", label: "Wall Thickness" },
+  { href: "/calculators/b314-wall-maop", label: "B31.4 Wall & MAOP" },
   { href: "/calculators/pipe-volume", label: "Pipe Volume" },
   { href: "/calculators/gas-flow", label: "Gas Flow" },
   { href: "/calculators/b31g", label: "B31G" },

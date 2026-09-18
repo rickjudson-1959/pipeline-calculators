@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test lib/hydrostatic.test.ts lib/wall-thickness.test.ts lib/pipe-volume.test.ts lib/gas-flow.test.ts lib/b31g.test.ts",
+    "test": "node --experimental-strip-types --test lib/hydrostatic.test.ts lib/wall-thickness.test.ts lib/pipe-volume.test.ts lib/gas-flow.test.ts lib/b31g.test.ts lib/b314-wall-maop.test.ts",
     "verify": "node --experimental-strip-types scripts/verify-hydro.ts && node --experimental-strip-types scripts/verify-wall.ts && node --experimental-strip-types scripts/verify-volume.ts && node --experimental-strip-types scripts/verify-gas-flow.ts && node --experimental-strip-types scripts/verify-b31g.ts"
   },
   "engines": {
