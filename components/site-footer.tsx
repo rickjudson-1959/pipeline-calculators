@@ -9,8 +9,9 @@ export function SiteFooter() {
         </p>
         <p className="footer-meta">
           Encoded checks only: hydrostatic high and low elevation gates, wall
-          thickness / MAOP, E, T, D/t, and multi-standard comparison, pipe
-          volume and displacement estimates, Weymouth / Panhandle gas flow
+          thickness / MAOP, E, T, D/t, and multi-standard comparison, a
+          dedicated ASME B31.4 wall thickness and MAOP sizer, pipe volume
+          and displacement estimates, Weymouth / Panhandle gas flow
           estimates, and ASME B31G / Modified B31G remaining strength. No ads
           and no email gate.
         </p>

@@ -36,7 +36,7 @@ export default function OpenGraphImage() {
           Pipeline Calculators
         </div>
         <div style={{ fontSize: 32, marginTop: 18, color: "#d6e3f0" }}>
-          Hydrostatic test, wall thickness, pipe volume, gas flow, and B31G for the field and the office
+          Hydrostatic test, wall thickness, B31.4 MAOP, pipe volume, gas flow, and B31G for the field and the office
         </div>
       </div>
     ),

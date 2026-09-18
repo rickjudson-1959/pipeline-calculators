@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     template: "%s | Pipe-Up Pipeline Calculators",
   },
   description:
-    "Field and office pipeline calculators for hydrostatic test planning, wall thickness / MAOP sizing, pipe volume and displacement, natural gas flow and pressure drop, and ASME B31G corroded-pipe remaining strength in Canada and the United States, under CSA Z662 and ASME B31.4 / B31.8 / B31G.",
+    "Field and office pipeline calculators for hydrostatic test planning, wall thickness / MAOP sizing, a dedicated ASME B31.4 wall thickness and MAOP sizer, pipe volume and displacement, natural gas flow and pressure drop, and ASME B31G corroded-pipe remaining strength in Canada and the United States, under CSA Z662 and ASME B31.4 / B31.8 / B31G.",
   applicationName: "Pipe-Up Pipeline Calculators",
   authors: [{ name: "Rick Judson" }],
   keywords: [
@@ -48,6 +48,7 @@ export const metadata: Metadata = {
     "pipeline displacement",
     "wall thickness",
     "MAOP",
+    "ASME B31.4 MAOP sizer",
     "natural gas flow",
     "Weymouth",
     "Panhandle A",
