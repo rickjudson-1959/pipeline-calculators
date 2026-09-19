@@ -26,6 +26,14 @@ export const CALCULATORS: CalculatorListing[] = [
       "Pressure-design wall, MAOP, E, T, D/t slenderness, and a multi-standard comparison grid for ASME B31.4, ASME B31.8 location class, and CSA Z662 Class 1.",
   },
   {
+    slug: "b314-wall-maop",
+    title: "ASME B31.4 Wall Thickness & MAOP Sizer",
+    href: "/calculators/b314-wall-maop",
+    status: "live",
+    summary:
+      "Dedicated ASME B31.4 liquid pipeline sizer. Solve for required wall from design pressure, or MAOP from an already selected wall thickness, at the fixed F=0.72 design factor.",
+  },
+  {
     slug: "pipe-volume",
     title: "Pipeline Volume & Displacement",
     href: "/calculators/pipe-volume",

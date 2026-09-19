@@ -657,6 +657,19 @@ a {
   color: var(--fail);
 }
 
+.b314-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 701px) {
+  .b314-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 700px) {
   .header-inner {
     flex-direction: column;

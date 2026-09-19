@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/` },
     { url: `${SITE}/calculators/hydrostatic-test` },
     { url: `${SITE}/calculators/wall-thickness` },
+    { url: `${SITE}/calculators/b314-wall-maop` },
     { url: `${SITE}/calculators/pipe-volume` },
     { url: `${SITE}/calculators/gas-flow` },
     { url: `${SITE}/calculators/b31g` },

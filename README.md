@@ -1,6 +1,6 @@
 # Pipeline Calculators
 
-Pipe-Up field and office calculators for pipeline work in Canada and the United States. This suite is complete for now. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates, and an ASME B31G / Modified B31G calculator for corroded-pipe remaining strength.
+Pipe-Up field and office calculators for pipeline work in Canada and the United States. This suite is complete for now. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a dedicated ASME B31.4 wall thickness and MAOP sizer, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates, and an ASME B31G / Modified B31G calculator for corroded-pipe remaining strength.
 
 This is an engineering aid, not stamped design.
 
@@ -24,6 +24,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - Hydrostatic calculator: `/calculators/hydrostatic-test`
 - Wall thickness calculator: `/calculators/wall-thickness`
+- ASME B31.4 wall & MAOP sizer: `/calculators/b314-wall-maop`
 - Pipe volume calculator: `/calculators/pipe-volume`
 - Gas flow calculator: `/calculators/gas-flow`
 - B31G calculator: `/calculators/b31g`
@@ -90,6 +91,8 @@ The wall thickness calculator applies only these checks:
 Design factors F: ASME B31.4 liquid and ASME B31.8 Class 1 Div 2 use 0.72. ASME B31.8 Class 1 Div 1 and CSA Z662 Class 1 use 0.80. ASME B31.8 Class 2 uses 0.60, Class 3 uses 0.50, and Class 4 uses 0.40.
 
 Default E is 1.00 (Seamless / ERW). Default T is 1.00 at or below 121 °C / 250 °F. Metric SMYS is entered in MPa and converted to kPa. US SMYS is already in PSI. E and T do not convert. The grid is encoded design-factor checks only. Do not treat the hydrostatic or wall pages as a full CSA Z662, ASME, or 49 CFR review.
+
+The dedicated ASME B31.4 wall & MAOP sizer at `/calculators/b314-wall-maop` reuses this same encoded pressure-design formula, locked to F=0.72, with no location classes and no comparison grid. It offers two modes: required wall from an entered design pressure, or MAOP from an entered nominal wall thickness. Whichever value drives the other mode is optional and, if left blank, is treated as not yet meaningful rather than defaulted to a misleading number.
 
 ## Encoded pipe-volume checks
 

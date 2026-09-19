@@ -9,9 +9,9 @@ export default function NotFound() {
         <h1>That route is not in this toolkit yet.</h1>
         <p className="lede">
           Live tools are the hydrostatic test calculator, the wall thickness
-          calculator, the pipe volume and displacement calculator, the
-          natural gas flow calculator, and the ASME B31G corroded-pipe
-          calculator.
+          calculator, the dedicated ASME B31.4 wall thickness and MAOP
+          sizer, the pipe volume and displacement calculator, the natural
+          gas flow calculator, and the ASME B31G corroded-pipe calculator.
         </p>
         <div className="hero-actions">
           <Link className="btn btn-primary" href="/">
@@ -22,6 +22,9 @@ export default function NotFound() {
           </Link>
           <Link className="btn btn-ghost" href="/calculators/wall-thickness">
             Open wall thickness
+          </Link>
+          <Link className="btn btn-ghost" href="/calculators/b314-wall-maop">
+            Open B31.4 wall &amp; MAOP
           </Link>
           <Link className="btn btn-ghost" href="/calculators/pipe-volume">
             Open pipe volume
