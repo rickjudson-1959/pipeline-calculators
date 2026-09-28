@@ -1,6 +1,6 @@
 # Pipeline Calculators
 
-Pipe-Up field and office calculators for pipeline work in Canada and the United States. This suite is complete for now. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a dedicated ASME B31.4 wall thickness and MAOP sizer, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates, and an ASME B31G / Modified B31G calculator for corroded-pipe remaining strength.
+Pipe-Up field and office calculators for pipeline work in Canada and the United States. Live tools are a hydrostatic test calculator for fill volume and elevation pressure checks, a wall thickness calculator for pressure-design minimum wall, MAOP, slenderness, and a multi-standard comparison grid under CSA Z662 and ASME B31.4 / B31.8, a dedicated ASME B31.4 wall thickness and MAOP sizer, a pipe volume and displacement calculator for line fill, fill mass, fill time, and chemical dosage, a natural gas flow calculator for Weymouth, Panhandle A, and Panhandle B rates, an ASME B31G / Modified B31G calculator for corroded-pipe remaining strength, and an NPS to OD reference table.
 
 This is an engineering aid, not stamped design.
 
@@ -28,6 +28,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Pipe volume calculator: `/calculators/pipe-volume`
 - Gas flow calculator: `/calculators/gas-flow`
 - B31G calculator: `/calculators/b31g`
+- NPS to OD reference table: `/calculators/nps-reference`
 
 ## Test and verify
 
@@ -134,3 +135,7 @@ The B31G calculator applies only these checks:
 - Operating gate: `REJECT (>80% DEPTH)` when `d/t > 0.80`. Otherwise `SAFE AT OPERATING PRESSURE` when operating pressure is at or below `P'_Mod`, or `DERATING REQUIRED`
 
 Unit toggle conversions: OD, wall, defect depth, and defect length by 25.4, SMYS by 145.038, operating pressure by 0.145038. Design factor F does not convert. Results pause when OD or WT is not greater than 0, depth or length is negative, or a Folias denominator is not greater than 0. B31G results are an engineering aid only, not a stamped integrity assessment.
+
+## NPS to OD reference table
+
+The reference table at `/calculators/nps-reference` looks up true outside diameter from ASME B36.10 / B36.19 nominal pipe size, 1/8 inch through 60 inch, in inches and millimetres. Outside diameter is fixed per NPS regardless of schedule or wall thickness. For NPS 14 and above, OD in inches equals the NPS number exactly. This page lists OD only, it does not include a schedule-by-schedule wall thickness chart. Confirm wall thickness against project specifications or the current edition of ASME B36.10 / B36.19.

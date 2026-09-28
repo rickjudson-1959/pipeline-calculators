@@ -11,7 +11,8 @@ export default function NotFound() {
           Live tools are the hydrostatic test calculator, the wall thickness
           calculator, the dedicated ASME B31.4 wall thickness and MAOP
           sizer, the pipe volume and displacement calculator, the natural
-          gas flow calculator, and the ASME B31G corroded-pipe calculator.
+          gas flow calculator, the ASME B31G corroded-pipe calculator, and
+          the NPS to OD reference table.
         </p>
         <div className="hero-actions">
           <Link className="btn btn-primary" href="/">
@@ -34,6 +35,9 @@ export default function NotFound() {
           </Link>
           <Link className="btn btn-ghost" href="/calculators/b31g">
             Open B31G
+          </Link>
+          <Link className="btn btn-ghost" href="/calculators/nps-reference">
+            Open NPS to OD
           </Link>
         </div>
       </section>
