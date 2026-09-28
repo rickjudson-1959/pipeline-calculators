@@ -57,4 +57,12 @@ export const CALCULATORS: CalculatorListing[] = [
     summary:
       "Original B31G and Modified B31G remaining strength, depth ratio, safe pressure, modified RSF, and an operating safety gate for a blunt metal-loss defect.",
   },
+  {
+    slug: "nps-reference",
+    title: "NPS to OD Reference Table",
+    href: "/calculators/nps-reference",
+    status: "live",
+    summary:
+      "ASME B36.10 / B36.19 nominal pipe size to true outside diameter lookup table, in inches and millimetres, for mapping NPS to OD across the suite.",
+  },
 ];

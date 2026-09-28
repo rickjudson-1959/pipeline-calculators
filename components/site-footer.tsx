@@ -12,8 +12,8 @@ export function SiteFooter() {
           thickness / MAOP, E, T, D/t, and multi-standard comparison, a
           dedicated ASME B31.4 wall thickness and MAOP sizer, pipe volume
           and displacement estimates, Weymouth / Panhandle gas flow
-          estimates, and ASME B31G / Modified B31G remaining strength. No ads
-          and no email gate.
+          estimates, ASME B31G / Modified B31G remaining strength, and an
+          NPS to OD reference table. No ads and no email gate.
         </p>
       </div>
     </footer>

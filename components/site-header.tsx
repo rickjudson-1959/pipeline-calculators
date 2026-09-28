@@ -9,6 +9,7 @@ const SUITE_NAV = [
   { href: "/calculators/pipe-volume", label: "Pipe Volume" },
   { href: "/calculators/gas-flow", label: "Gas Flow" },
   { href: "/calculators/b31g", label: "B31G" },
+  { href: "/calculators/nps-reference", label: "NPS to OD" },
 ];
 
 type SiteHeaderProps = {
